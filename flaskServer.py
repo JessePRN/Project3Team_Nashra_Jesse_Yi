@@ -37,6 +37,8 @@ def welcome():
     return (
         f"Available Routes:<br/>"
         f"/api/v1.0/names<br/>"
+        f"/api/v1.0/&lt;start&gt;<br/>"
+        # f"/api/v1.0/&lt;start&gt;/&lt;end&gt;<br/>"
     )
 
 
@@ -56,7 +58,22 @@ def names():
 
     return jsonify(all_names)
 
+@app.route("/api/v1.0/<start>")
+def tempBetween(start):
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
 
+    """Return a list of passenger data including the name, age, and sex of each passenger"""
+    # Query stations
+    
+                
+    tempSince = session.query(tickers.Name).filter(tickers.Date >= start).all()
+    all_names = list(np.ravel(tempSince))
+    session.close()
+
+    
+
+    return jsonify(all_names)
 
 if __name__ == '__main__':
     app.run(debug=True)
