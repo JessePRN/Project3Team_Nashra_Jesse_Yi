@@ -1,6 +1,6 @@
 function init() {
 
-  d3.json("http://127.0.0.1:5000/api/v1.0/uniqueNames").then(function (response) {
+  d3.json("http://127.0.0.1:5000/names/unique").then(function (response) {
         // once we get a response, do stuff
         console.log("response below");
         console.log(response);

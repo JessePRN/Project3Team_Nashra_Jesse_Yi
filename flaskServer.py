@@ -4,9 +4,9 @@ import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
-
+from datetime import datetime
 from flask import Flask, jsonify, render_template
-
+from datetime import date
 
 #################################################
 # Database Setup
@@ -82,18 +82,21 @@ def namesUnique():
 @app.route("/tickers/all")
 def tickersAll():
     session = Session(engine)
-    tickers = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).all()
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).all()
     # uniqueTickers = set(tempSince)
     # tempSince = list(uniqueTickers)
-    all_names = list(np.ravel(tickers))
+    all_names = list(np.ravel(tickersAll))
     session.close()
     return jsonify(all_names)
 
 @app.route("/tickers/<start>")
 def tickersStart(start):
     session = Session(engine) 
-    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).filter(tickers.Date >= start).all()
+    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).filter(tickers.Date > start).all()
     tickersSincePrint = list(np.ravel(tickersSince))
+    # typeVar = type(tickersSince)
+    
+    # print("type of Date is " + typeVar)
     session.close()
     return jsonify(tickersSincePrint)
 
