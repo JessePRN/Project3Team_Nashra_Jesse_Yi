@@ -100,5 +100,18 @@ def tickersStart(start):
     session.close()
     return jsonify(tickersSincePrint)
 
+@app.route("/tickers/name/<name>")
+def tickersName(name):
+    # response = []
+    session = Session(engine)
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).filter(tickers.Name == name).all()
+    print(tickersAll)
+
+    # this line converts sqlite query to dictionary
+    tickerDict = [dict(ticker) for ticker in tickersAll]
+        
+    session.close()
+    return jsonify(tickerDict)
+
 if __name__ == '__main__':
     app.run(debug=True)
