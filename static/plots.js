@@ -1,5 +1,5 @@
 function init() {
-
+// populating the dropdown with unique names from stocks.sqlite
   d3.json("http://127.0.0.1:5000/names/unique").then(function (response) {
     // once we get a response, do stuff
     console.log("response below");
@@ -17,20 +17,6 @@ function init() {
 // Call updatePlotly() when a change takes place to the DOM
 // d3.selectAll("#selDataset").on("change", updatePlotly);
 
-function initChart() {
-  d3.json("http://127.0.0.1:5000/tickers/2022-06-29").then(function (response) {
-    // once we get a response, do stuff
-    console.log("response below");
-    console.log(response);
-
-
-
-
-  });
-
-
-}
-
 function optionChanged() {
   let dropdownMenu = d3.select("#selDataset");
   // Assign the value of the dropdown menu option to a variable
@@ -42,21 +28,17 @@ function optionChanged() {
     // once we get a response, do stuff
     console.log("response below");
     console.log(response);
-
     drawTicker(response)
 
-
   })
-  
-
 }
 
 function drawTicker(response) {
-  let xData = response.map(x => x.Date)
+  let xData = response.map(ticker => ticker.Date)
   // console.log("xdata is " + xData);
-  let yData = response.map(x => x.Close)
+  let yData = response.map(ticker => ticker.Close)
   let label = response[0].Name
-  console.log("label is " + label);
+  // console.log("label is " + label);
   var layout = { title: "<b>Stocks</b>" };
   var config = { responsive: true }
 
@@ -71,9 +53,6 @@ function drawTicker(response) {
   var data = [trace1]
   Plotly.newPlot('line', data, layout, config);
 
-
 }
-
-
 
 init();
