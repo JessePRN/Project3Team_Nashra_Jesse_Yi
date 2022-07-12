@@ -71,14 +71,14 @@ function sectorChanged(){
   let sector = dropdownMenu.property("value");
   console.log("Selected value is " + sector)
   d3.json("http://127.0.0.1:5000/tickers/sector/" + sector).then(function (response) {
-    console.log("tickerSectorChanged response below");
+    console.log("sectorChanged response below");
     console.log(response);
     // todo: handle response with multiple ticker entities
-    drawTicker(response)
+    drawMultiTicker(response)
   })
 }
 
-
+//takes in single entity's data response and charts it
 function drawTicker(response) {
   let xData = response.map(ticker => ticker.Date)
   // console.log("xdata is " + xData);
@@ -97,6 +97,21 @@ function drawTicker(response) {
   }
   var data = [trace1]
   Plotly.newPlot('line', data, layout, config);
+
+}
+
+function drawMultiTicker(response){
+  response.sort()
+  prettyJson = {}
+  // let xarray = response.map(ticker => ticker.Date)
+  for (ticker in response){
+    console.log(ticker.Date)
+  }
+  let testDate = response[1].Date
+  console.log("testDate is")
+  console.log(testDate)
+  console.log("xarray below")
+  console.log(xarray)
 
 }
 

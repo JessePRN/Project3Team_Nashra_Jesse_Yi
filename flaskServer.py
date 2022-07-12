@@ -1,12 +1,10 @@
 import numpy as np
-
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 from datetime import datetime
 from flask import Flask, jsonify, render_template
-from datetime import date
 
 #################################################
 # Database Setup
@@ -50,9 +48,6 @@ def welcome():
         f'@app.route("/tickers/sector/<sector>")<br/>'
         f'# retrieves unique list of crypto names<br/>'
         f'@app.route("/crypto/names/unique")<br/>'
-
-
-
         # f"/api/v1.0/&lt;start&gt;/&lt;end&gt;<br/>"
     )
 
@@ -73,11 +68,11 @@ def namesUnique():
     session.close()
     return jsonify(namesPrint)
 
-# retrieves all tickers
+# retrieves all tickers (entire db)
 @app.route("/tickers/all")
 def tickersAll():
     session = Session(engine)
-    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).all()
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).all()
     # uniqueTickers = set(tempSince)
     # tempSince = list(uniqueTickers)
     all_names = list(np.ravel(tickersAll))
@@ -88,11 +83,8 @@ def tickersAll():
 @app.route("/tickers/<start>")
 def tickersStart(start):
     session = Session(engine) 
-    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).filter(tickers.Date > start).all()
+    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Date > start).all()
     tickersSincePrint = list(np.ravel(tickersSince))
-    # typeVar = type(tickersSince)
-    
-    # print("type of Date is " + typeVar)
     session.close()
     return jsonify(tickersSincePrint)
 
