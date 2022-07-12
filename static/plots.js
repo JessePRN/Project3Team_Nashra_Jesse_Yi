@@ -1,13 +1,13 @@
 function init() {
 
-  // populating the dropdown with unique names from stocks.sqlite
+  // populating the stocks dropdown with unique names from stocks.sqlite
   d3.json("http://127.0.0.1:5000/tickers/names/unique").then(function (response) {
     console.log("unique ticker names api response below");
     console.log(response);
     response = response.sort()
     // Append an option in the dropdown
     response.forEach(function (name) {
-      d3.select('#selStockTicker')
+      d3.select('#selStock')
         .append('option')
         .text(name)
     });
@@ -33,7 +33,7 @@ function init() {
     response = response.sort()
     // Append an option in the dropdown
     response.forEach(function (name) {
-      d3.select('#selTickerSector')
+      d3.select('#selSector')
         .append('option')
         .text(name)
     });
@@ -41,8 +41,8 @@ function init() {
 }
 
 // called by stock ticker dropdown
-function tickerChanged() {
-  let dropdownMenu = d3.select("#selStockTicker");
+function stockChanged() {
+  let dropdownMenu = d3.select("#selStock");
   let tickerName = dropdownMenu.property("value");
   console.log("stock ticker selected value is " + tickerName)
   d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
@@ -65,18 +65,16 @@ function cryptoChanged(){
   })
 }
 
-function tickerSectorChanged(){
-  let dropdownMenu = d3.select("#selTickerSector");
-  let tickerName = dropdownMenu.property("value");
-
-  console.log("Selected value is " + tickerName)
-
-  d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
-    // once we get a response, do stuff
+//called by sector dropdown
+function sectorChanged(){
+  let dropdownMenu = d3.select("#selSector");
+  let sector = dropdownMenu.property("value");
+  console.log("Selected value is " + sector)
+  d3.json("http://127.0.0.1:5000/tickers/sector/" + sector).then(function (response) {
     console.log("tickerSectorChanged response below");
     console.log(response);
     // todo: handle response with multiple ticker entities
-    // drawTicker(response)
+    drawTicker(response)
   })
 }
 
@@ -87,9 +85,8 @@ function drawTicker(response) {
   let yData = response.map(ticker => ticker.Close)
   let label = response[0].Name
   // console.log("label is " + label);
-  var layout = { title: "<b>Stocks</b>" };
+  var layout = { title: "<b>TICKERS ZOMGBBQ</b>" };
   var config = { responsive: true }
-
   var trace1 = {
     type: "scatter",
     mode: "lines",
