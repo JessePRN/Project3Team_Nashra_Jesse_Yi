@@ -8,8 +8,8 @@
   <title>Bellybutton Biodiversity</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
 </head>
 
 <body>
@@ -24,8 +24,16 @@
     <div class="row">
       <div class="col-md-2">
         <div class="well">
-          <h5>Test Subject ID No.:</h5>
-          <select id="selDataset" onchange="optionChanged(this.value)"></select>
+          <h5>Select Stock</h5>
+          <select id="selStockTicker" onchange="tickerChanged(this.value)"></select>
+        </div>
+        <div class="well">
+          <h5>Select Crypto</h5>
+          <select id="selCrypto" onchange="cryptoChanged(this.value)"></select>
+        </div>
+        <div class="well">
+          <h5>Select Sector</h5>
+          <select id="selTickerSector" onchange="tickerSectorChanged(this.value)"></select>
         </div>
         <div class="panel panel-primary">
           <div class="panel-heading">
@@ -34,7 +42,7 @@
           <div id="sample-metadata" class="panel-body"></div>
         </div>
       </div>
-      <div class="col-md-5">
+      <div class="col-md-12">
         <div id="line"></div>
       </div>
       <div class="col-md-5">
@@ -50,8 +58,7 @@
 
 
   <script src="./static/plots.js"></script>
-  
+
 </body>
 
 </html>
-
