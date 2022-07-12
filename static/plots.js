@@ -85,7 +85,7 @@ function drawTicker(response) {
   let yData = response.map(ticker => ticker.Close)
   let label = response[0].Name
   // console.log("label is " + label);
-  var layout = { title: "<b>TICKERS ZOMGBBQ</b>" };
+  var layout = { title: label };
   var config = { responsive: true }
   var trace1 = {
     type: "scatter",
