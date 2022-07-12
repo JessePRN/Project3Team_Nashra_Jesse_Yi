@@ -31,7 +31,7 @@ app = Flask(__name__)
 # Flask Routes
 #################################################
 
-@app.route("/")
+@app.route("/api")
 def welcome():
     """List all available api routes."""
     return (
@@ -47,7 +47,7 @@ def welcome():
         f"/tickers/&lt;start&gt;<br/>"
         # f"/api/v1.0/&lt;start&gt;/&lt;end&gt;<br/>"
     )
-@app.route("/template")
+@app.route("/")
 def template():
     """List all available api routes."""
     return render_template("index.html")
@@ -69,10 +69,10 @@ def namesStart(start):
     return jsonify(all_names)
 
 
-@app.route("/names/unique")
+@app.route("/tickers/names/unique")
 def namesUnique():
     session = Session(engine)
-    names = session.query(tickers.Name).all()
+    names = session.query(tickers.Name).filter(tickers.Sector != "Crypto Currency").all()
     namesSet = set(names)
     names = list(namesSet)
     namesPrint = list(np.ravel(names))
@@ -112,6 +112,39 @@ def tickersName(name):
         
     session.close()
     return jsonify(tickerDict)
+
+@app.route("/tickers/sector/<sector>")
+def tickersSector(sector):
+    # response = []
+    session = Session(engine)
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
+    print(tickersAll)
+
+    # this line converts sqlite query to dictionary
+    tickerDict = [dict(ticker) for ticker in tickersAll]
+        
+    session.close()
+    return jsonify(tickerDict)    
+
+@app.route("/crypto/names/unique")
+def cryptoUnique():
+    session = Session(engine)
+    names = session.query(tickers.Name).filter(tickers.Sector == "Crypto Currency").all()
+    namesSet = set(names)
+    names = list(namesSet)
+    namesPrint = list(np.ravel(names))
+    session.close()
+    return jsonify(namesPrint)    
+
+@app.route("/tickers/sector/unique")
+def allSectors():
+    session = Session(engine)
+    names = session.query(tickers.Sector).filter(tickers.Sector != "Crypto Currency").all()
+    namesSet = set(names)
+    names = list(namesSet)
+    namesPrint = list(np.ravel(names))
+    session.close()
+    return jsonify(namesPrint) 
 
 if __name__ == '__main__':
     app.run(debug=True)
