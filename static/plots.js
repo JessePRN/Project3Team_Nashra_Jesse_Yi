@@ -2,11 +2,9 @@ function init() {
 
   // populating the dropdown with unique names from stocks.sqlite
   d3.json("http://127.0.0.1:5000/tickers/names/unique").then(function (response) {
-    // once we get a response, do stuff
-    console.log("unique ticker response below");
+    console.log("unique ticker names api response below");
     console.log(response);
     response = response.sort()
-
     // Append an option in the dropdown
     response.forEach(function (name) {
       d3.select('#selStockTicker')
@@ -17,8 +15,7 @@ function init() {
 
   //populating dropdown with crypto names
   d3.json("http://127.0.0.1:5000/crypto/names/unique").then(function (response) {
-    // once we get a response, do stuff
-    console.log("unique crypto response below");
+    console.log("unique crypto names api response below");
     console.log(response);
     response = response.sort()
     // Append an option in the dropdown
@@ -31,8 +28,7 @@ function init() {
 
   //populating dropdown with sectors
   d3.json("http://127.0.0.1:5000/tickers/sector/unique").then(function (response) {
-    // once we get a response, do stuff
-    console.log("unique sector response below");
+    console.log("unique sectors api response below");
     console.log(response);
     response = response.sort()
     // Append an option in the dropdown
@@ -42,31 +38,31 @@ function init() {
         .text(name)
     });
   });
-
-
 }
 
-// Call updatePlotly() when a change takes place to the DOM
-// d3.selectAll("#selDataset").on("change", updatePlotly);
-
+// called by stock ticker dropdown
 function tickerChanged() {
   let dropdownMenu = d3.select("#selStockTicker");
-  // Assign the value of the dropdown menu option to a variable
   let tickerName = dropdownMenu.property("value");
-
-  console.log("Selected value is " + tickerName)
-
+  console.log("stock ticker selected value is " + tickerName)
   d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
     // once we get a response, do stuff
-    console.log("response below");
+    console.log("tickerChanged response below");
     console.log(response);
     drawTicker(response)
-
   })
 }
 
+// called by crypto dropdown
 function cryptoChanged(){
-
+  let dropdownMenu = d3.select("#selCrypto");
+  let tickerName = dropdownMenu.property("value");
+  console.log("crypto selected value is " + tickerName)
+  d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
+    console.log("cryptoChanged response below");
+    console.log(response);
+    drawTicker(response)
+  })
 }
 
 function tickerSectorChanged(){
@@ -75,12 +71,12 @@ function tickerSectorChanged(){
 
   console.log("Selected value is " + tickerName)
 
-  d3.json("http://127.0.0.1:5000/tickers/sector/unique").then(function (response) {
+  d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
     // once we get a response, do stuff
-    console.log("response below");
+    console.log("tickerSectorChanged response below");
     console.log(response);
-    drawTicker(response)
-
+    // todo: handle response with multiple ticker entities
+    // drawTicker(response)
   })
 }
 

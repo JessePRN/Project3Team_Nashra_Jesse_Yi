@@ -35,40 +35,34 @@ app = Flask(__name__)
 def welcome():
     """List all available api routes."""
     return (
-        f"<b>Use Template Below</b><br/>"
-        f"/template<br/><br/>"
-        f"<b>Available Routes:</b><br/>"
-        f"<br/>Names:<br/>"
-        f"/names/all<br/>"
-        f"/names/&lt;start&gt;<br/>"
-        f"/names/unique<br/>"
-        f"<br/><b>Tickers</b>:<br/>"
-        f"/tickers/all<br/>"
-        f"/tickers/&lt;start&gt;<br/>"
+        f'<b>Available Routes:</b><br/>'
+        f'# retrieves unique list of stock ticker names<br/>'
+        f'@app.route("/tickers/names/unique")<br/>'
+        f'# retrieves all tickers<br/>'
+        f'@app.route("/tickers/all")<br/>'
+        f'# retrieves all tickers by start date<br/>'
+        f'@app.route("/tickers/<start>")<br/>'
+        f'# retrieves unique list of sectors excluding crypto<br/>'
+        f'@app.route("/tickers/sector/unique")<br/>'
+        f'# retrieves ticker data by name<br/>'
+        f'@app.route("/tickers/name/<name>")<br/>'
+        f'# retrieves ticker data by sector<br/>'
+        f'@app.route("/tickers/sector/<sector>")<br/>'
+        f'# retrieves unique list of crypto names<br/>'
+        f'@app.route("/crypto/names/unique")<br/>'
+
+
+
         # f"/api/v1.0/&lt;start&gt;/&lt;end&gt;<br/>"
     )
+
+
 @app.route("/")
 def template():
     """List all available api routes."""
     return render_template("index.html")
 
-@app.route("/names/all")
-def namesAll():
-    session = Session(engine)
-    results = session.query(tickers.Name).all()
-    session.close()
-    all_names = list(np.ravel(results))
-    return jsonify(all_names)
-
-@app.route("/names/<start>")
-def namesStart(start):
-    session = Session(engine) 
-    tempSince = session.query(tickers.Name).filter(tickers.Date >= start).all()
-    all_names = list(np.ravel(tempSince))
-    session.close()
-    return jsonify(all_names)
-
-
+# retrieves unique list of stock ticker names
 @app.route("/tickers/names/unique")
 def namesUnique():
     session = Session(engine)
@@ -79,6 +73,7 @@ def namesUnique():
     session.close()
     return jsonify(namesPrint)
 
+# retrieves all tickers
 @app.route("/tickers/all")
 def tickersAll():
     session = Session(engine)
@@ -89,6 +84,7 @@ def tickersAll():
     session.close()
     return jsonify(all_names)
 
+# retrieves all tickers by start date
 @app.route("/tickers/<start>")
 def tickersStart(start):
     session = Session(engine) 
@@ -100,32 +96,39 @@ def tickersStart(start):
     session.close()
     return jsonify(tickersSincePrint)
 
+# retrieves unique list of sectors excluding crypto
+@app.route("/tickers/sector/unique")
+def allSectors():
+    session = Session(engine)
+    names = session.query(tickers.Sector).filter(tickers.Sector != "Crypto Currency").all()
+    namesSet = set(names)
+    names = list(namesSet)
+    namesPrint = list(np.ravel(names))
+    session.close()
+    return jsonify(namesPrint)     
+
+# retrieves ticker data by name
 @app.route("/tickers/name/<name>")
 def tickersName(name):
-    # response = []
     session = Session(engine)
-    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close).filter(tickers.Name == name).all()
-    print(tickersAll)
-
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Name == name).all()
+    # print(tickersAll)
     # this line converts sqlite query to dictionary
     tickerDict = [dict(ticker) for ticker in tickersAll]
-        
     session.close()
     return jsonify(tickerDict)
 
+# retrieves ticker data by sector
 @app.route("/tickers/sector/<sector>")
 def tickersSector(sector):
-    # response = []
     session = Session(engine)
     tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
-    print(tickersAll)
-
-    # this line converts sqlite query to dictionary
+    # print(tickersAll)
     tickerDict = [dict(ticker) for ticker in tickersAll]
-        
     session.close()
     return jsonify(tickerDict)    
 
+# retrieves unique list of crypto names
 @app.route("/crypto/names/unique")
 def cryptoUnique():
     session = Session(engine)
@@ -135,16 +138,6 @@ def cryptoUnique():
     namesPrint = list(np.ravel(names))
     session.close()
     return jsonify(namesPrint)    
-
-@app.route("/tickers/sector/unique")
-def allSectors():
-    session = Session(engine)
-    names = session.query(tickers.Sector).filter(tickers.Sector != "Crypto Currency").all()
-    namesSet = set(names)
-    names = list(namesSet)
-    namesPrint = list(np.ravel(names))
-    session.close()
-    return jsonify(namesPrint) 
 
 if __name__ == '__main__':
     app.run(debug=True)
