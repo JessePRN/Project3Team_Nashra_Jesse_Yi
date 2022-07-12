@@ -104,14 +104,14 @@ function drawMultiTicker(response){
   response.sort()
   prettyJson = {}
   // let xarray = response.map(ticker => ticker.Date)
-  for (ticker in response){
-    console.log(ticker.Date)
-  }
+  // for (ticker in response){
+  //   console.log(ticker.Date)
+  // }
   let testDate = response[1].Date
   console.log("testDate is")
   console.log(testDate)
-  console.log("xarray below")
-  console.log(xarray)
+  // console.log("xarray below")
+  // console.log(xarray)
 
 }
 
