@@ -1,7 +1,5 @@
 function init() {
 
-  // import * as d3 from "https://cdn.skypack.dev/d3@7";
-
   // populating the stocks dropdown with unique names from stocks.sqlite
   d3.json("http://127.0.0.1:5000/tickers/names/unique").then(function (response) {
     console.log("unique ticker names api response below");
@@ -52,6 +50,7 @@ function stockChanged() {
     console.log("tickerChanged response below");
     console.log(response);
     drawTicker(response)
+    buildTable(response)
   })
 }
 
@@ -64,6 +63,7 @@ function cryptoChanged() {
     console.log("cryptoChanged response below");
     console.log(response);
     drawTicker(response)
+    buildTable(response)
   })
 }
 
@@ -102,9 +102,8 @@ function drawTicker(response) {
 
 }
 
-
-
 init();
+
 // build table
 function buildTable(response){
   // build a table that displays the latest ticker value and date
@@ -116,23 +115,30 @@ function buildTable(response){
     console.log("table is clear")
   
    //build table
-    let fillTable = demoTable.append("table")
+    let fillTable = demoTable.append("mytable")
     let row = fillTable.append('tr')
     let tableData = row.append('td')
   
    console.log("table is built")
   
   // populate table
-    let Price = tableData.text('Price: '+ response.ticker.Close)
+   
+
+    let Name = tableData.text('For: '+ response[response.length-1].Name)
     row = fillTable.append('tr')
     tableData = row.append('td')
-    let Date = tableData.text('Date: '+ response.ticker.Date)
+    let Ticker = tableData.text('Ticker: '+ response[response.length-1].Ticker)
+    row = fillTable.append('tr')
+    tableData = row.append('td')
+    let Price = tableData.text('Date: '+ response[response.length-1].Close)
+    row = fillTable.append('tr')
+    tableData = row.append('td')
+    let Date = tableData.text('Date: '+ response[response.length-1].Date)
     row = fillTable.append('tr')
     tableData = row.append('td')
     
     console.log("table is being filled")
   }
-//testing playground
 
 function drawBubble(response) {
   let date = '7-13-2020'
@@ -175,34 +181,10 @@ function drawBubble(response) {
 
 
 }
+function testCode(){
+  console.log(sampleTickers)
+}
 
-// build table
-function buildTable(response){
-  // build a table that displays the latest ticker value and date
-    let demoTable = d3.select('#table');
-  
-  //clear table before new data is appended
-    demoTable.html('')
-    
-    console.log("table is clear")
-  
-   //build table
-    let fillTable = demoTable.append("table")
-    let row = fillTable.append('tr')
-    let tableData = row.append('td')
-  
-   console.log("table is built")
-  
-  // populate table
-    let Price = tableData.text('Price: '+ response.ticker.Close)
-    row = fillTable.append('tr')
-    tableData = row.append('td')
-    let Date = tableData.text('Date: '+ response.ticker.Date)
-    row = fillTable.append('tr')
-    tableData = row.append('td')
-    
-    console.log("table is being filled")
-  }
 
 function drawMultiLines(response) {
 
