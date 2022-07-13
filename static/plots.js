@@ -84,7 +84,7 @@ function drawTicker(response) {
   // console.log("xdata is " + xData);
   let yData = response.map(ticker => ticker.Close)
   let label = response[0].Name
-  // console.log("label is " + label);
+  console.log("label is " + label);
   var layout = { title: label };
   var config = { responsive: true }
   var trace1 = {
