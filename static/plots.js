@@ -50,6 +50,7 @@ function stockChanged() {
     console.log("tickerChanged response below");
     console.log(response);
     drawTicker(response)
+    buildTable(response)
   })
 }
 
@@ -62,6 +63,7 @@ function cryptoChanged(){
     console.log("cryptoChanged response below");
     console.log(response);
     drawTicker(response)
+    buildTable(response)
   })
 }
 
@@ -98,6 +100,34 @@ function drawTicker(response) {
   var data = [trace1]
   Plotly.newPlot('line', data, layout, config);
 
+}
+
+// build table
+function buildTable(response){
+// build a table that displays the latest ticker value and date
+  let demoTable = d3.select('#table');
+
+//clear table before new data is appended
+  demoTable.html('')
+  
+  console.log("table is clear")
+
+ //build table
+  let fillTable = demoTable.append("table")
+  let row = fillTable.append('tr')
+  let tableData = row.append('td')
+
+ console.log("table is built")
+
+// populate table
+  let Price = tableData.text('Price: '+ response.ticker.Close)
+  row = fillTable.append('tr')
+  tableData = row.append('td')
+  let Date = tableData.text('Date: '+ response.ticker.Date)
+  row = fillTable.append('tr')
+  tableData = row.append('td')
+  
+  console.log("table is being filled")
 }
 
 function drawMultiTicker(response){
