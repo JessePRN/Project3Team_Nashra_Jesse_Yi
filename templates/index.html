@@ -53,26 +53,19 @@
         <p>Use the interactive charts below to explore the dataset</p>
       </div>
     </div>
-    <button id="testBtn" type="button" class="btn" onclick="drawBubble()">Test</button>
     <!-- dropdown menu for assets -->
     <div class ="container">
       <div class="row">
         
 
-          <div class="well col-md-4">
+          <div class="well col-md-6">
             <h5>Select Stock</h5>
             <select id="selStock" onchange="stockChanged(this.value)"></select>
           </div>
         
-          <div class="well col-md-4">
+          <div class="well col-md-6">
             <h5>Select Crypto</h5>
             <select id="selCrypto" onchange="cryptoChanged(this.value)"></select>
-          </div>
-        
-        
-          <div class="well col-md-4">
-            <h5>Select Sector</h5>
-            <select id="selSector" onchange="sectorChanged(this.value)"></select>
           </div>
         
       
@@ -109,11 +102,26 @@
       </div>
     </div>
 
+    <div class="well col-md-12">
+      <h5>Select Sector</h5>
+      <select id="selSector" onchange="sectorChanged(this.value)"></select>
+    </div>
 <!-- multiline chart -->
     <div id="multiline">
 
     </div>
-  
+    <!-- <button id="testBtn" type="button" class="btn" onclick="drawBubble()">Test</button> -->
+
+    <div class="row">
+      <div class="col-md-2">
+        <div class="well">
+          <h5>Select Date</h5>
+          <select id="selDataset" onchange="dateSelect(this.value)"></select>
+        </div>
+      </div>
+    </div>
+      
+    </div>
 <!-- bubble chart -->
 <div class = "container">
     <div class="row">

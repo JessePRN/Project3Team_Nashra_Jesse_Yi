@@ -129,7 +129,16 @@ def cryptoUnique():
     names = session.query(tickers.Name).distinct(tickers.Name).filter(tickers.Sector == "Crypto Currency").all()
     namesPrint = list(np.ravel(names))
     session.close()
-    return jsonify(namesPrint)    
+    return jsonify(namesPrint)
+
+# retrieves unique list of dates 
+@app.route("/dates/unique")
+def datesUnique():
+    session = Session(engine)
+    dates = session.query(tickers.Date).distinct().all()
+    datesPrint = list(np.ravel(dates))
+    session.close()
+    return jsonify(datesPrint)    
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -38,7 +38,22 @@ function init() {
         .text(name)
     });
   });
+
+  // populate dropdown with unique dates
+d3.json("http://127.0.0.1:5000/dates/unique").then(function (response) {
+  console.log("unique date api response below");
+  console.log(response);
+  response = response.sort((b,a) => b-a).reverse()
+  // Append an option in the dropdown
+  response.forEach(function (date) {
+    d3.select('#selDataset')
+      .append('option')
+      .text(date)
+  });
+});
 }
+
+
 
 // called by stock ticker dropdown
 function stockChanged() {
@@ -112,18 +127,17 @@ function buildTable(response){
   //clear table before new data is appended
     demoTable.html('')
     
-    console.log("table is clear")
+    // console.log("table is clear")
   
    //build table
     let fillTable = demoTable.append("mytable")
     let row = fillTable.append('tr')
     let tableData = row.append('td')
   
-   console.log("table is built")
+  //  console.log("table is built")
   
   // populate table
-   
-
+  
     let Name = tableData.text('For: '+ response[response.length-1].Name)
     row = fillTable.append('tr')
     tableData = row.append('td')
@@ -137,12 +151,38 @@ function buildTable(response){
     row = fillTable.append('tr')
     tableData = row.append('td')
     
-    console.log("table is being filled")
+    // console.log("table is being filled")
   }
 
+
+function dateSelect(){
+  let dropdownMenu = d3.select("#selDataset");
+  let dateUnique = dropdownMenu.property("value");
+  console.log("date selected value is " + dateUnique)
+  let splitDate = dateUnique.split(' ')
+  let slicedDate = splitDate.slice(0,4)
+  let joinDate =slicedDate.join(" ")
+
+  d3.json("http://127.0.0.1:5000/tickers/date/" + joinDate).then(function (response) {
+      console.log("dateUnique response below");
+      console.log(response);
+      drawBubble(response)
+});
+}
+ 
 function drawBubble(response) {
-  let date = '7-13-2020'
-  d3.json("http://127.0.0.1:5000/tickers/date/" + date).then(function (response) {
+ 
+  // let date = "1-28-2021"
+
+  let dropdownMenu = d3.select("#selDataset");
+  let date = dropdownMenu.property("value");
+  let splitDate = date.split(' ')
+  let slicedDate = splitDate.slice(0,4)
+  let joinDate =slicedDate.join(" ")
+  console.log(joinDate)
+  // console.log("seth's stuff")
+
+  d3.json("http://127.0.0.1:5000/tickers/date/"+ joinDate).then(function (response) {
     // once we get a response, do stuff
     // console.log("drawbubble request below");
     // console.log(response);
