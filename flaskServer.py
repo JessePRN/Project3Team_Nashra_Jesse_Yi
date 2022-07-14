@@ -1,5 +1,7 @@
 import numpy as np
 import sqlalchemy
+import sqlite3
+
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
@@ -24,7 +26,10 @@ tickers = Base.classes.stocks
 # Flask Setup
 #################################################
 app = Flask(__name__)
-
+def get_db_connection():
+    conn = sqlite3.connect('stocks.sqlite')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 #################################################
 # Flask Routes
@@ -85,6 +90,15 @@ def tickersSpecific(date):
     tickerDict = [dict(ticker) for ticker in tickersSince]
     session.close()
     return jsonify(tickerDict) 
+
+# retrieves all tickers by date 2nd version just in case
+@app.route("/tickers/date/jesse/<date>")
+def tickersSpecificJesse(date):
+    conn = get_db_connection()
+    posts = conn.execute('SELECT * FROM stocks where Date = ?', [date]).fetchall()
+    conn.close()
+    tickerDict = [dict(ticker) for ticker in posts]
+    return jsonify(tickerDict)     
 
 # retrieves all tickers by start date
 @app.route("/tickers/<start>")
