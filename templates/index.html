@@ -26,18 +26,12 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" href="stocks.html">Stocks</a>
+            <a class="nav-link" href="stocks.html">About The Team</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="crypto.html">Crypto</a>
-          </li>
+          
             </ul>
           </li>
         </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
       </div>
     </div>
   </nav>
@@ -47,29 +41,44 @@
     <div class="row">
       <div class="col-md-12 jumbotron text-center">
         <h1>Crypto & Stock Trends</h1>
-        <p>Use the interactive charts below to explore the dataset</p>
+        <p>Use the interactive charts below to explore historic trends around stock and crypto prices.</p>
       </div>
     </div>
+    
     <!-- dropdown menu for assets -->
+    <br/>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card form-control border-primary">
+          <div class="card-body">
+            <h5 class="card-title">Select Stock</h5>
+            <p class="card-text">Select a Stock you would like to analyze.</p>
+            <select id="selStock" onchange="stockChanged(this.value)"></select>
+            
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card form-control border-success">
+          <div class="card-body">
+            
+            <h5 class="card-title">Select Crypto</h5>
+            <p class="card-text">Select a Crypto you would like to analyze.</p>
+            <select id="selCrypto" onchange="cryptoChanged(this.value)"></select>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class ="container">
       <div class="row">
         
-
-          <div class="well col-md-6">
-            <h5>Select Stock</h5>
-            <select id="selStock" onchange="stockChanged(this.value)"></select>
-          </div>
-        
-          <div class="well col-md-6">
-            <h5>Select Crypto</h5>
-            <select id="selCrypto" onchange="cryptoChanged(this.value)"></select>
-          </div>
         
       
     </div>
   </div>
 
     <!-- line chart -->
+    <br/>
      <div class = "container">
       <div class = "row">
         <div class="col-md-12">
@@ -77,33 +86,66 @@
             <div id="line"></div>
               </div>
                 <figure class="figure col-md-4">
-                  <h3>Stock Info</h3>
-                    <a href="#">
-                      <img src="../memes/harold_painful_smile.png" class="img-fluid" alt="Responsive image">
+                  <div></div>
+                  
+                  
+                      
                 </figure>
                     </a>
               </div>
             </div>
-
-            <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3 class="panel-title">Latest Price</h3>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="card form-control border-primary">
+                  <div class="card-body">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Latest Stock Price</h3>
+                      </div>
+                      <div id="table" class="panel-body"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div id="table" class="panel-body"></div>
+              <div class="col-sm-6">
+                <div class="card form-control border-success">
+                  <div class="card-body">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Latest Crypto Price</h3>
+                      </div>
+                      <div id="table2" class="panel-body"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            <div class ="container">
+          <div class="row">
+                
+                
+              
+            
     
       <!-- gauge chart -->
-    <div class ="container">
-      <div class="col-md-5">
-        <div id="gauge"></div>
+    </div>
+   <br/>
+  <hr class="dashed">
+  <br/>
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Select Sector</h5>
+            <p class="card-text">Select the Sector you would like to analyze.</p>
+            <select id="selSector" onchange="sectorChanged(this.value)"></select>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="well col-md-12">
-      <h5>Select Sector</h5>
-      <select id="selSector" onchange="sectorChanged(this.value)"></select>
-    </div>
+      <br/><br/><br/>    
+   
 <!-- multiline chart -->
+
     <div id="multiline">
 
     </div>

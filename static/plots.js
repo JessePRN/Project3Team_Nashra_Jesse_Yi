@@ -180,7 +180,7 @@ init();
     let Ticker = tableData.text('Ticker: ' + response[response.length - 1].Ticker)
     row = fillTable.append('tr')
     tableData = row.append('td')
-    let Price = tableData.text('Date: ' + response[response.length - 1].Close)
+    let Price = tableData.text('Close: ' + response[response.length - 1].Close)
     row = fillTable.append('tr')
     tableData = row.append('td')
     let Date = tableData.text('Date: ' + response[response.length - 1].Date)
