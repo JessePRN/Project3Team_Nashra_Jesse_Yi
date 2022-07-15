@@ -63,7 +63,10 @@ def template():
     """List all available api routes."""
     return render_template("index.html")
 
-
+@app.route("/about")
+def about():
+    """List all available api routes."""
+    return render_template("about.html")
 
 # retrieves unique list of stock ticker names
 @app.route("/tickers/names/unique")
