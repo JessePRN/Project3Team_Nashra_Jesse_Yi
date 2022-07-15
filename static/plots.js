@@ -2,6 +2,7 @@ let tickerNames = []
 let tickerData = []
 let tickerSectors = []
 let tickerDataDict = {}
+
 function init() {
 
   // populating the stocks dropdown with unique names from stocks.sqlite
@@ -85,9 +86,8 @@ function init() {
 
   d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + onLoadDate).then(function (response) {
     drawBubble(response)
+    drawTree(response)
   })
-
-
 
 }//end init
 
@@ -120,7 +120,7 @@ function stockChangedMultiple() {
     buildTable(response)
   })
 }
-
+// called by crypto dropdown, redesigned to work with new draw functions
 function cryptoChangedMultiple() {
   let dropdownMenu = d3.select("#selCrypto");
   let tickerName = dropdownMenu.property("value");
@@ -129,13 +129,12 @@ function cryptoChangedMultiple() {
     // once we get a response, do stuff
     console.log("tickerChangedMulti response below");
     console.log(response);
-
     drawTickerMultiple(response)
     buildTable2(response)
   })
 }
 
-// called by crypto dropdown
+// called by crypto dropdown, DEPRECATED
 function cryptoChanged() {
   let dropdownMenu = d3.select("#selCrypto");
   let tickerName = dropdownMenu.property("value");
@@ -148,7 +147,7 @@ function cryptoChanged() {
   })
 }
 
-//called by sector dropdown
+//called by sector dropdown, DEPRECATED
 function sectorChanged() {
   let dropdownMenu = d3.select("#selSector");
   let sector = dropdownMenu.property("value");
@@ -161,6 +160,7 @@ function sectorChanged() {
   })
 }
 
+//called by sector dropdown
 function sectorChangedMulti() {
   let dropdownMenu = d3.select("#selSector");
   let sector = dropdownMenu.property("value");
@@ -180,16 +180,10 @@ function sectorChangedMulti() {
 }
 
 function drawTickerMultiple(response) {
-
-  // console.log("xdata is " + xData);
   data = []
   tickerData.push(response)
-  // tickerDataDict[response[0].Name] = response
   console.log("drawTickerMultiple tickerdata below");
   console.log(tickerData);
-
-  // for (tickerObject in tickerData) {
-
   for (index = 0; index < tickerData.length; index++) {
     console.log(tickerData[index]);
 
@@ -206,7 +200,7 @@ function drawTickerMultiple(response) {
       name: label,
       x: xData,
       y: yData,
-      line: { color: '#17BECF' }
+      line: { color: pickColor() }
     }
     data.push(trace1)
     // }
@@ -222,6 +216,9 @@ function drawTickerMultiple(response) {
 
 }
 
+function pickColor(){
+  color(Math.random())
+}
 //takes in single entity's data response and charts it
 function drawTicker(response) {
   let xData = response.map(ticker => ticker.Date)
@@ -323,11 +320,6 @@ function dateSelect() {
 }
 
 function drawBubble(response) {
-
-  // let jsonSlice = response.slice(0, 10)
-  // console.log("slice")
-  // console.log(jsonSlice)
-
   let bubbleData = []
   for (var i = 0; i < response.length; i++) {
     var obj = response[i]
@@ -339,19 +331,43 @@ function drawBubble(response) {
   }
   // console.log("formatted bubble data below")
   // console.log(bubbleData)
-
   let chart = BubbleChart(bubbleData, {
     label: d => [...d.id.split(".").pop().split(/(?=[A-Z][a-z])/g), d.value.toLocaleString("en")].join("\n"),
     value: d => d.value,
-    group: d => d.id.split(".")[1],
+    group: d => d.id.split(".")[0],
     title: d => `${d.id}\n${d.value.toLocaleString("en")}`,
     // link: d => `https://github.com/prefuse/Flare/blob/master/flare/src/${d.id.replace(/\./g, "/")}.as`,
     width: 1152
   })
-
   d3.select('#bubble').selectAll("*").remove();
   d3.select('#bubble').node().appendChild(chart);
+}
 
+function drawTree(response) {
+  let bubbleData = []
+  for (var i = 0; i < response.length; i++) {
+    var obj = response[i]
+    // console.log(obj.Name)
+    bubbleData.push({
+      "name": obj.Sector + "." + obj.Ticker,
+      "size": obj.Close
+    })
+  }
+  // console.log("formatted bubble data below")
+  // console.log(bubbleData)
+  chart = Treemap(bubbleData, {
+    path: d => d.name.replace(/\./g, "/"), // e.g., "flare/animate/Easing"
+    value: d => d?.size, // size of each node (file); null for internal nodes (folders)
+    group: d => d.name.split(".")[0], // e.g., "animate" in "flare.animate.Easing"; for color
+    label: (d, n) => [...d.name.split(".").pop().split(/(?=[A-Z][a-z])/g), n.value.toLocaleString("en")].join("\n"),
+    title: (d, n) => `${d.name}\n${n.value.toLocaleString("en")}`, // text to show on hover
+    link: (d, n) => `https://github.com/prefuse/Flare/blob/master/flare/src${n.id}.as`,
+    tile: d3.treemapBinary, // e.g., d3.treemapBinary; set by input above
+    width: 1152,
+    height: 1152
+  })
+  d3.select('#tree').selectAll("*").remove();
+  d3.select('#tree').node().appendChild(chart);
 }
 
 function drawMultiLines(response) {
@@ -359,7 +375,7 @@ function drawMultiLines(response) {
     x: d => Date.parse(d.Date),
     y: d => d.Close,
     z: d => d.Name,
-    yLabel: "↑ Unemployment (%)",
+    yLabel: "TreeMap",
     width: 2000,
     height: 900
     // color: "steelblue"

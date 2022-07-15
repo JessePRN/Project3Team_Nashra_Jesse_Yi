@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.js"
     integrity="sha512-pJbXh9nxFa1tkmI3Gxiay8+mKTW+QvM8aMrTSR4xcw671sTWkvlHBgnyqXCRr1HFkE0YwhoRZwcdUFFxP4D9Lg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 
 <body style="background-color:#1F2833">
@@ -80,118 +80,111 @@
     </div>
 
     <!-- line chart -->
-    <br />
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
+    <br/>
+     <div class = "container">
+      <div class = "row">
+        <div class="col-md-12">
           <h1 style="color:#2FFBEE"> Daily Closing Price</h1>
-        </div>
-        <div class="col-md-6">
-          <button style="color:#2FFBEE" type="button" class="btn" onclick="resetLines()">Reset</button>
-        </div>
-      </div>
-      <div id="line" class="col-md-12"></div>
-    </div>
-    <br />
-    <!-- Latest Stock Price Table -->
-    <div class="row">
-      <div class="col-sm-6">
-        <div class="card form-control"
-          style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
-          <div class="card-body">
-            <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3 class="panel-title" style="color:#2FFBEE">Latest Stock Price</h3>
+            <div id="line" ></div>
+              </div>
+                <figure class="figure col-md-4" >
+                  <div></div>
+                <br/>  
+                  
+                  
+                      
+                </figure>
+                  
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="card form-control" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+                  <div class="card-body">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title" style="color:#2FFBEE">Latest Stock Price</h3>
+                      </div>
+                      <div style="color:#2FFBEE" id="table" class="panel-body"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="card form-control" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+                  <div class="card-body">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title" style="color:#2FFBEE">Latest Crypto Price</h3>
+                      </div>
+                      <div style="color:#2FFBEE" id="table2" class="panel-body"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div style="color:#2FFBEE" id="table" class="panel-body"></div>
             </div>
-          </div>
-        </div>
-      </div>
-      <!-- Latest Crypto Price Table -->
+            <div class ="container">
+          <div class="row">
+        <br/>
+      
+                
+           </div>
+   <br/>
+   <br/>
+   <hr class="dashed" style="color:#2FFBEE">
 
-      <div class="col-sm-6">
-        <div class="card form-control"
-          style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+  <br/>
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
           <div class="card-body">
-            <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3 class="panel-title" style="color:#2FFBEE">Latest Crypto Price</h3>
-              </div>
-              <div style="color:#2FFBEE" id="table2" class="panel-body"></div>
-            </div>
+            <h5 class="card-title" style="color:#2FFBEE">Select Sector</h5>
+            <select id="selSector" onchange="sectorChanged(this.value)"></select>
+            <br/><br/>
+            <p class="card-text" style="color:#2FFBEE">Select the Sector you would like to analyze.</p>
           </div>
         </div>
       </div>
-      <div style="color:#2FFBEE" id="table" class="panel-body"></div>
+           
+              
+            
+    
+      <!-- gauge chart -->
     </div>
-    <div class="container">
+
+   
+
+<!-- multiline chart -->
+<br/>
+    <div style="color:#2FFBEE" id="multiline">
+      
+    </div>
+  <br/>
+  <hr class="dashed" style="color:#2FFBEE"> 
+  <br/>
       <div class="row">
-        <br />
-
-
-      </div>
-      <br />
-      <br />
-      <hr class="dashed" style="color:#2FFBEE">
-
-      <br />
-      <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-2">
           <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
             <div class="card-body">
-              <h5 class="card-title" style="color:#2FFBEE">Select Sector</h5>
-              <p class="card-text" style="color:#2FFBEE">Select the Sector you would like to analyze.</p>
-              <select id="selSector" onchange="sectorChangedMulti(this.value)"></select>
+              <h5 style="color:#2FFBEE">Select Date</h5>
+              
+              <select id="selDataset" onchange="dateSelect(this.value)" ></select>
             </div>
           </div>
         </div>
-        <br />
-        <br />
-        <br />
-        <br />
-
-        <!-- multiline chart -->
-        <div style="color:#2FFBEE" id="multiline"></div>
-        <br />
-        <hr class="dashed" style="color:#2FFBEE">
-        <br />
+      </div>
+      <!-- bubble chart -->
+      <hr class="dashed">
+      <div class="container">
         <div class="row">
-          <div class="col-sm-2">
-            <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
-              <div class="card-body">
-                <h5 style="color:#2FFBEE">Select Date</h5>
-                <select id="selDataset" onchange="dateSelect(this.value)"></select>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <!-- bubble chart -->
-        <hr class="dashed">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div id="bubble"></div>
-            </div>
+          <div class="col-md-12">
+            <div id="bubble"></div>
           </div>
         </div>
-
-
-        <!-- tree map -->
-        <hr class="dashed">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div id="tree"></div>
-            </div>
-          </div>
-        </div>
-
-        
-        <script src="./static/plots.js"></script>
-        <script src="./static/sampleTickers.js"></script>
-        <script src="./static/observable.js"></script>
+      </div>
+      <script src="./static/plots.js"></script>
+      <script src="./static/sampleTickers.js"></script>
 
 </body>
 
