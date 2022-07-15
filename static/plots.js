@@ -66,7 +66,7 @@ function init() {
     //
     let onLoadSector = "Information Technology"
     let onLoadTicker = "Netflix"
-    let onLoadDate = '2020-07-20'
+    let onLoadDate = '2021-07-20'
 
     //populate multichart on initial load for appearances
     d3.json("http://127.0.0.1:5000/tickers/sector/" + onLoadSector).then(function (response) {
@@ -133,11 +133,11 @@ function sectorChanged() {
 //takes in single entity's data response and charts it
 function drawTicker(response) {
       let xData = response.map(ticker => ticker.Date)
-      // console.log("xdata is " + xData);
+      console.log("xdata is " + xData);
       let yData = response.map(ticker => ticker.Close)
       let label = response[0].Name
-      // console.log("label is " + label);
-      var layout = { title: "<b>TICKERS ZOMGBBQ</b>" };
+      console.log("label is " + label);
+      var layout = { title: label };
       var config = { responsive: true }
       var trace1 = {
         type: "scatter",
