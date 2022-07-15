@@ -157,6 +157,8 @@
         <br />
         <hr class="dashed" style="color:#2FFBEE">
         <br />
+        
+        <!-- date selector for bubble chart -->
         <div class="row">
           <div class="col-sm-2">
             <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
@@ -177,8 +179,19 @@
             </div>
           </div>
         </div>
+                <!-- date selector for treemap -->
 
+        <div class="row">
+          <div class="col-sm-2">
+            <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+              <div class="card-body">
+                <h5 style="color:#2FFBEE">Select Date</h5>
+                <select id="selDatasetForMap" onchange="dateSelectForMap(this.value)"></select>
+              </div>
+            </div>
+          </div>
 
+        </div>
         <!-- tree map -->
         <hr class="dashed">
         <div class="container">

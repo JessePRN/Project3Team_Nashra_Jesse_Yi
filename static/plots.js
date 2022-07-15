@@ -44,30 +44,29 @@ function init() {
     });
   });
 
-  // populate dropdown with unique dates
+  // populate bubble dropdown with unique dates
   d3.json("http://127.0.0.1:5000/dates/unique").then(function (response) {
     // console.log("unique date api response below");
     // console.log(response);
     response = response.sort((b, a) => b - a).reverse()
-    // response.forEach(element => formatDate.getFullYear()+"-"+formatDate.getMonth()+"-"+formatDate.getDate() );
-
     // Append an option in the dropdown
     response.forEach(function (date) {
       formatDate = new Date(date)
       date2 = formatDate.getFullYear() + "-" +
         String(formatDate.getMonth()).padStart(2, '0') +
         "-" + String(formatDate.getDate()).padStart(2, '0')
-
-      // String(n).padStart(2, '0'); // '0009'
       d3.select('#selDataset')
+        .append('option')
+        .text(date2)
+      // populate treemap dropdown with unique dates
+      d3.select('#selDatasetForMap')
         .append('option')
         .text(date2)
     });
   });
 
-  //new code to populate menus on initial load
-  //
-  //
+  // code to populate menus on initial load
+  
   let onLoadSector = "Information Technology"
   let onLoadTicker = "Netflix"
   let onLoadDate = '2020-07-13'
@@ -179,6 +178,39 @@ function sectorChangedMulti() {
   })
 }
 
+//populates date selector for bubble chart
+function dateSelect() {
+  let dropdownMenu = d3.select("#selDataset");
+  let dateUnique = dropdownMenu.property("value");
+  console.log("date selected value is " + dateUnique)
+  let splitDate = dateUnique.split(' ')
+  let slicedDate = splitDate.slice(0, 4)
+  let joinDate = slicedDate.join(" ")
+  console.log("date selected value is " + joinDate)
+
+  d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + joinDate).then(function (response) {
+    console.log("dateUnique response below");
+    console.log(response);
+    drawBubble(response)
+  });
+}
+
+//populates date selector for bubble chart
+function dateSelectForMap() {
+  let dropdownMenu = d3.select("#selDatasetForMap");
+  let dateUnique = dropdownMenu.property("value");
+  // console.log("date selected value is " + dateUnique)
+  let splitDate = dateUnique.split(' ')
+  let slicedDate = splitDate.slice(0, 4)
+  let joinDate = slicedDate.join(" ")
+  // console.log("date selected value is " + joinDate)
+  d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + joinDate).then(function (response) {
+    console.log("dateUnique response below");
+    console.log(response);
+    drawTree(response)
+  });
+}
+
 function drawTickerMultiple(response) {
   data = []
   tickerData.push(response)
@@ -186,12 +218,9 @@ function drawTickerMultiple(response) {
   console.log(tickerData);
   for (index = 0; index < tickerData.length; index++) {
     console.log(tickerData[index]);
-
     let xData = tickerData[index].map(ticker => ticker.Date)
-    // console.log("xdata is " + xData);
     let yData = tickerData[index].map(ticker => ticker.Close)
     let label = tickerData[index][0].Name
-    // console.log("label is " + label);
     var layout = { title: tickerData[index][0].Name };
     var config = { responsive: true }
     var trace1 = {
@@ -203,20 +232,16 @@ function drawTickerMultiple(response) {
       line: { color: pickColor() }
     }
     data.push(trace1)
-    // }
   }
 
-
-  // var data = [trace1]
   Plotly.newPlot('line', data, layout, config);
-  // tickerNames.push(response[0].Name)
 
   // console.log("lineTickers in memory below")
   // console.log(tickerNames)
 
 }
 
-function pickColor(){
+function pickColor() {
   color(Math.random())
 }
 //takes in single entity's data response and charts it
@@ -302,21 +327,10 @@ function buildTable2(response) {
   tableData = row.append('td')
 }
 
-//populates date selector for bubble chart
-function dateSelect() {
-  let dropdownMenu = d3.select("#selDataset");
-  let dateUnique = dropdownMenu.property("value");
-  console.log("date selected value is " + dateUnique)
-  let splitDate = dateUnique.split(' ')
-  let slicedDate = splitDate.slice(0, 4)
-  let joinDate = slicedDate.join(" ")
-  console.log("date selected value is " + joinDate)
 
-  d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + joinDate).then(function (response) {
-    console.log("dateUnique response below");
-    console.log(response);
-    drawBubble(response)
-  });
+
+function toAbout() {
+  d3.json("http://127.0.0.1:5000/about")
 }
 
 function drawBubble(response) {
@@ -361,7 +375,7 @@ function drawTree(response) {
     group: d => d.name.split(".")[0], // e.g., "animate" in "flare.animate.Easing"; for color
     label: (d, n) => [...d.name.split(".").pop().split(/(?=[A-Z][a-z])/g), n.value.toLocaleString("en")].join("\n"),
     title: (d, n) => `${d.name}\n${n.value.toLocaleString("en")}`, // text to show on hover
-    link: (d, n) => `https://github.com/prefuse/Flare/blob/master/flare/src${n.id}.as`,
+    // link: (d, n) => `https://github.com/prefuse/Flare/blob/master/flare/src${n.id}.as`,
     tile: d3.treemapBinary, // e.g., d3.treemapBinary; set by input above
     width: 1152,
     height: 1152
