@@ -66,7 +66,7 @@ function init() {
     //
     let onLoadSector = "Information Technology"
     let onLoadTicker = "Netflix"
-    let onLoadDate = '2020-07-13'
+    let onLoadDate = '2020-07-20'
 
     //populate multichart on initial load for appearances
     d3.json("http://127.0.0.1:5000/tickers/sector/" + onLoadSector).then(function (response) {
@@ -80,7 +80,7 @@ function init() {
     })
     //populate bubblechart on init
 
-    d3.json("http://127.0.0.1:5000/tickers/date/" + onLoadDate).then(function (response) {
+    d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + onLoadDate).then(function (response) {
       drawBubble(response)
     })
 
@@ -195,12 +195,12 @@ init();
     let dropdownMenu = d3.select("#selDataset");
     let dateUnique = dropdownMenu.property("value");
     console.log("date selected value is " + dateUnique)
-    let splitDate = dateUnique.split(' ')
-    let slicedDate = splitDate.slice(0, 4)
-    let joinDate = slicedDate.join(" ")
-    console.log("date selected value is " + joinDate)
+    // let splitDate = dateUnique.split(' ')
+    // let slicedDate = splitDate.slice(0, 4)
+    // let joinDate = slicedDate.join(" ")
+    // console.log("date selected value is " + joinDate)
 
-    d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + joinDate).then(function (response) {
+    d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + dateUnique).then(function (response) {
       console.log("dateUnique response below");
       console.log(response);
       drawBubble(response)
@@ -243,9 +243,10 @@ init();
       x: d => Date.parse(d.Date),
       y: d => d.Close,
       z: d => d.Name,
-      yLabel: "↑ Unemployment (%)",
+      yLabel: "Price",
+      xLabel: "Time",
       width: 2000,
-      height: 900,
+      height: 1200,
       color: "steelblue"
     })
 
@@ -353,7 +354,7 @@ init();
       .call(g => g.select(".domain").remove())
       .call(voronoi ? () => { } : g => g.selectAll(".tick line").clone()
         .attr("x2", width - marginLeft - marginRight)
-        .attr("stroke-opacity", 0.1))
+        .attr("stroke-opacity", 0.5))
       .call(g => g.append("text")
         .attr("x", -marginLeft)
         .attr("y", 10)
@@ -383,7 +384,7 @@ init();
 
     dot.append("text")
       .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
+      .attr("font-size", 30)
       .attr("text-anchor", "middle")
       .attr("y", -8);
 
@@ -468,7 +469,7 @@ init();
       .attr("viewBox", [-marginLeft, -marginTop, width, height])
       .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
       .attr("fill", "currentColor")
-      .attr("font-size", 10)
+      .attr("font-size", 30)
       .attr("font-family", "sans-serif")
       .attr("text-anchor", "middle");
 
