@@ -88,7 +88,7 @@
           <h1 style="color:#2FFBEE"> Daily Closing Price</h1>
         </div>
         <div class="col-md-6">
-          <button style="color:#2FFBEE" type="button" class="btn" onclick="resetLines()">Reset</button>
+          <button style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833; color:#2FFBEE"  type="button" class="btn" onclick="resetLines()">Reset Graph</button>
         </div>
       </div>
       <div id="line" class="col-md-12"></div>
@@ -136,7 +136,11 @@
       <br />
       <hr class="dashed" style="color:#2FFBEE">
 
-      <br />
+      <br/>
+      <div class="col-md-6">
+        <h1 style="color:#2FFBEE"> Sector Analysis</h1>
+        <br/>
+      </div>
       <div class="row">
         <div class="col-sm-4">
           <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
@@ -147,17 +151,18 @@
             </div>
           </div>
         </div>
-        <br />
-        <br />
-        <br />
-        <br />
+      
+       
 
         <!-- multiline chart -->
         <div style="color:#2FFBEE" id="multiline"></div>
         <br />
         <hr class="dashed" style="color:#2FFBEE">
         <br />
-        
+        <div class="col-md-6">
+          <h1 style="color:#2FFBEE">Bubble Chart Analysis</h1>
+          <br/>
+        </div>
         <!-- date selector for bubble chart -->
         <div class="row">
           <div class="col-sm-2">
@@ -179,10 +184,15 @@
             </div>
           </div>
         </div>
+        <hr class="dashed" style="color:#2FFBEE">
+        <br/>
                 <!-- date selector for treemap -->
-
+                <div class="col-md-6">
+                  <h1 style="color:#2FFBEE">Tree Chart Analysis</h1>
+                  <br/>
+                </div>
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-2">
             <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
               <div class="card-body">
                 <h5 style="color:#2FFBEE">Select Date</h5>
