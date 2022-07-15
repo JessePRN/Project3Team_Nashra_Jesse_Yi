@@ -1,7 +1,7 @@
 import numpy as np
 import sqlalchemy
 import sqlite3
-
+import html
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
@@ -138,6 +138,27 @@ def tickersSector(sector):
     session = Session(engine)
     tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
     tickerDict = [dict(ticker) for ticker in tickersAll]
+    session.close()
+    return jsonify(tickerDict)    
+
+# retrieves ticker data by sector
+@app.route("/tickers/sector/multi/<sectors>")
+def tickersSectors(sectors):
+    print("raw sectors in multiSectors flask route: " + sectors)
+    sectors = sectors.replace("%20", " ")
+    my_list = sectors.split(",")
+    # print("my_list is: " + String(my_list))
+    session = Session(engine)
+    tickerDict = []
+  
+    for sector in my_list:
+        print(sector)
+        print(type(sector))
+        tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
+        tempDict = [dict(ticker) for ticker in tickersAll]
+        tickerDict = tickerDict + tempDict
+    # tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
+    # tickerDict = [dict(ticker) for ticker in tickersAll]
     session.close()
     return jsonify(tickerDict)    
 
