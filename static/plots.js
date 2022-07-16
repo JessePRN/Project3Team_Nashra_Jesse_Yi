@@ -2,11 +2,12 @@ let tickerNames = []
 let tickerData = []
 let tickerSectors = []
 let tickerDataDict = {}
+let stockData = []
 
 function init() {
 
   // populating the stocks dropdown with unique names from stocks.sqlite
-  d3.json("http://127.0.0.1:5000/tickers/names/unique").then(function (response) {
+  d3.json("/tickers/names/unique").then(function (response) {
     // console.log("unique ticker names api response below");
     // console.log(response);
     response = response.sort()
@@ -19,7 +20,7 @@ function init() {
   });
 
   //populating dropdown with crypto names
-  d3.json("http://127.0.0.1:5000/crypto/names/unique").then(function (response) {
+  d3.json("/crypto/names/unique").then(function (response) {
     // console.log("unique crypto names api response below");
     // console.log(response);
     response = response.sort()
@@ -32,7 +33,7 @@ function init() {
   });
 
   //populating dropdown with sectors
-  d3.json("http://127.0.0.1:5000/tickers/sector/unique").then(function (response) {
+  d3.json("/tickers/sector/unique").then(function (response) {
     // console.log("unique sectors api response below");
     // console.log(response);
     response = response.sort()
@@ -45,81 +46,101 @@ function init() {
   });
 
   // populate bubble dropdown with unique dates
-  d3.json("http://127.0.0.1:5000/dates/unique").then(function (response) {
+  d3.json("/dates/unique").then(function (response) {
     // console.log("unique date api response below");
     // console.log(response);
-    response = response.sort((b, a) => b - a).reverse()
+    // response = response.sort((b, a) => b - a).reverse()
+    
+    response = response.map(formatDate => new Date(formatDate).getFullYear() + "-" +
+    String(new Date(formatDate).getMonth()+1).padStart(2, '0') +
+    "-" + String(new Date(formatDate).getDate()).padStart(2, '0'))
+
+    response.sort(function(a,b) {
+      a = a.split('-').join('');
+      b = b.split('-').join('');
+      // return a > b ? 1 : a < b ? -1 : 0;
+      return a.localeCompare(b);         // <-- alternative 
+    });
+    response.reverse()
     // Append an option in the dropdown
     response.forEach(function (date) {
-      formatDate = new Date(date)
-      date2 = formatDate.getFullYear() + "-" +
-        String(formatDate.getMonth()).padStart(2, '0') +
-        "-" + String(formatDate.getDate()).padStart(2, '0')
+      // formatDate = new Date(date)
+      // date2 = formatDate.getFullYear() + "-" +
+      //   String(formatDate.getMonth()).padStart(2, '0') +
+      //   "-" + String(formatDate.getDate()).padStart(2, '0')
+
+      // date2 = date2.sort((b, a) => b - a).reverse()
+
       d3.select('#selDataset')
         .append('option')
-        .text(date2)
+        .text(date)
       // populate treemap dropdown with unique dates
       d3.select('#selDatasetForMap')
         .append('option')
-        .text(date2)
+        .text(date)
     });
   });
 
   // code to populate menus on initial load
-  
+
   let onLoadSector = "Information Technology"
-  let onLoadTicker = "3M"
-  let onLoadDate = '2020-07-25'
+  let onLoadTicker = "Netflix"
+  let onLoadDate = '2020-07-13'
+  let onLoadCrypto = 'Aave USD'
 
   //populate multichart on initial load for appearances
-  d3.json("http://127.0.0.1:5000/tickers/sector/" + onLoadSector).then(function (response) {
+  d3.json("/tickers/sector/" + onLoadSector).then(function (response) {
     drawMultiLines(response)
-    drawMultiLinesPer(response)
   })
   //populate linechart on init
 
-  d3.json("http://127.0.0.1:5000/tickers/name/" + onLoadTicker).then(function (response) {
-    drawTicker(response)
+  d3.json("/tickers/name/" + onLoadTicker).then(function (response) {
+    drawTickerMultiple(response)
     drawTickerper(response)
+
     buildTable(response)
   })
+  d3.json("/tickers/name/" + onLoadCrypto).then(function (response) {
+    drawTickerMultiple(response)
+    buildTable2(response)
+  })
   //populate bubblechart on init
-
-  d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + onLoadDate).then(function (response) {
+  d3.json("/tickers/date/jesse/" + onLoadDate).then(function (response) {
     drawBubble(response)
     drawTree(response)
   })
+
+  // let dropdownMenu = d3.select("#selStock");
+  // dropdownMenu.property("value") = "Netflix"
 
 }//end init
 
 
 
 // called by stock ticker dropdown
-function stockChanged() {
-  let dropdownMenu = d3.select("#selStock");
-  let tickerName = dropdownMenu.property("value");
-  console.log("stock ticker selected value is " + tickerName)
-  d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
-    // once we get a response, do stuff
-    console.log("tickerChanged response below");
-    console.log(response);
-    drawTicker(response)
-    drawTickerper(response)
-    buildTable(response)
-  })
-}
+// function stockChanged() {
+//   let dropdownMenu = d3.select("#selStock");
+//   let tickerName = dropdownMenu.property("value");
+//   console.log("stock ticker selected value is " + tickerName)
+//   d3.json("/tickers/name/" + tickerName).then(function (response) {
+//     // once we get a response, do stuff
+//     console.log("tickerChanged response below");
+//     console.log(response);
+//     drawTicker(response)
+//     buildTable(response)
+//   })
+// }
 
 function stockChangedMultiple() {
   let dropdownMenu = d3.select("#selStock");
   let tickerName = dropdownMenu.property("value");
   console.log("stock ticker selected value is " + tickerName)
-  d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
+  d3.json("/tickers/name/" + tickerName).then(function (response) {
     // once we get a response, do stuff
     console.log("tickerChangedMulti response below");
     console.log(response);
 
     drawTickerMultiple(response)
-    drawMultiLinesPer(response)
     buildTable(response)
   })
 }
@@ -128,9 +149,9 @@ function cryptoChangedMultiple() {
   let dropdownMenu = d3.select("#selCrypto");
   let tickerName = dropdownMenu.property("value");
   console.log("crypto ticker selected value is " + tickerName)
-  d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
+  d3.json("/tickers/name/" + tickerName).then(function (response) {
     // once we get a response, do stuff
-    console.log("tickerChangedMulti response below");
+    console.log("cryptoChangedMulti response below");
     console.log(response);
     drawTickerMultiple(response)
     buildTable2(response)
@@ -138,31 +159,30 @@ function cryptoChangedMultiple() {
 }
 
 // called by crypto dropdown, DEPRECATED
-function cryptoChanged() {
-  let dropdownMenu = d3.select("#selCrypto");
-  let tickerName = dropdownMenu.property("value");
-  console.log("crypto selected value is " + tickerName)
-  d3.json("http://127.0.0.1:5000/tickers/name/" + tickerName).then(function (response) {
-    console.log("cryptoChanged response below");
-    console.log(response);
-    drawTicker(response)
-    drawTickerper(response)
-    buildTable(response)
-  })
-}
+// function cryptoChanged() {
+//   let dropdownMenu = d3.select("#selCrypto");
+//   let tickerName = dropdownMenu.property("value");
+//   console.log("crypto selected value is " + tickerName)
+//   d3.json("/tickers/name/" + tickerName).then(function (response) {
+//     console.log("cryptoChanged response below");
+//     console.log(response);
+//     drawTicker(response)
+//     buildTable(response)
+//   })
+// }
 
 //called by sector dropdown, DEPRECATED
-function sectorChanged() {
-  let dropdownMenu = d3.select("#selSector");
-  let sector = dropdownMenu.property("value");
-  console.log("Selected value is " + sector)
-  d3.json("http://127.0.0.1:5000/tickers/sector/" + sector).then(function (response) {
-    console.log("sectorChanged response below");
-    console.log(response);
-    // todo: handle response with multiple ticker entities
-    drawMultiLines(response)
-  })
-}
+// function sectorChanged() {
+//   let dropdownMenu = d3.select("#selSector");
+//   let sector = dropdownMenu.property("value");
+//   console.log("Selected value is " + sector)
+//   d3.json("/tickers/sector/" + sector).then(function (response) {
+//     console.log("sectorChanged response below");
+//     console.log(response);
+//     // todo: handle response with multiple ticker entities
+//     drawMultiLines(response)
+//   })
+// }
 
 //called by sector dropdown
 function sectorChangedMulti() {
@@ -173,7 +193,7 @@ function sectorChangedMulti() {
   sectorParam = String(tickerSectors)
   sectorParam = sectorParam.replaceAll(" ", "%20")
 
-  d3.json("http://127.0.0.1:5000/tickers/sector/multi/" + sectorParam).then(function (response) {
+  d3.json("/tickers/sector/multi/" + sectorParam).then(function (response) {
     console.log("sectorParam below")
     console.log(sectorParam)
     console.log("sectorChangedMulti response below");
@@ -193,7 +213,7 @@ function dateSelect() {
   let joinDate = slicedDate.join(" ")
   console.log("date selected value is " + joinDate)
 
-  d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + joinDate).then(function (response) {
+  d3.json("/tickers/date/jesse/" + joinDate).then(function (response) {
     console.log("dateUnique response below");
     console.log(response);
     drawBubble(response)
@@ -209,7 +229,7 @@ function dateSelectForMap() {
   let slicedDate = splitDate.slice(0, 4)
   let joinDate = slicedDate.join(" ")
   // console.log("date selected value is " + joinDate)
-  d3.json("http://127.0.0.1:5000/tickers/date/jesse/" + joinDate).then(function (response) {
+  d3.json("/tickers/date/jesse/" + joinDate).then(function (response) {
     console.log("dateUnique response below");
     console.log(response);
     drawTree(response)
@@ -217,89 +237,95 @@ function dateSelectForMap() {
 }
 
 function drawTickerMultiple(response) {
-  data = []
+  stockData = []
   tickerData.push(response)
   console.log("drawTickerMultiple tickerdata below");
   console.log(tickerData);
+  var layout = { title: "Tickers" }
+  var config = { responsive: true }
   for (index = 0; index < tickerData.length; index++) {
-    console.log(tickerData[index]);
-    let xData = tickerData[index].map(ticker => ticker.Date)
-    let yData = tickerData[index].map(ticker => ticker.Close)
-    let label = tickerData[index][0].Name
-    var layout = { title: tickerData[index][0].Name };
-    var config = { responsive: true }
-    var trace1 = {
-      type: "scatter",
-      mode: "lines",
-      name: label,
-      x: xData,
-      y: yData,
-      line: { color: pickColor() }
-    }
-    data.push(trace1)
-  }
+    let companyStock = tickerData[index]
+    // console.log("company stock ticker below");
+    // console.log(companyStock);
+    // companyStock.sort()
 
-  Plotly.newPlot('line', data, layout, config);
+    //sort here right before creating traces to fix date issue with crypto?
+    companyStock.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+    let xData = companyStock.map(ticker => cleanDate(ticker.Date))
+    let yData = companyStock.map(ticker => ticker.Close)
+    let label = companyStock[0].Name
+
+    if (companyStock[0].Sector.includes("Crypto")) {
+
+      var trace1 = {
+        type: "scatter",
+        mode: "line",
+        name: label,
+        x: xData,
+        y: yData,
+        line: { color: pickColor() }
+      }
+    } else {
+
+      var trace1 = {
+        type: "scatter",
+        mode: "line",
+        name: label,
+        x: xData,
+        y: yData,
+        line: { color: pickColor() }
+      }
+    }
+    stockData.push(trace1)
+  }//end for
+  console.log("stockdata below")
+  console.log(stockData)
+  d3.select('#line').selectAll("*").remove();
+  Plotly.newPlot('line', stockData, layout, config);
 
   // console.log("lineTickers in memory below")
   // console.log(tickerNames)
 
+}
+function cleanDate(date) {
+  timestamp = new Date(date)
+  const currentDayOfMonth = timestamp.getDate();
+  const currentMonth = timestamp.getMonth(); // Be careful! January is 0, not 1
+  const currentYear = timestamp.getFullYear();
+  // const dateString = currentDayOfMonth + "-" + (currentMonth + 1) + "-" + currentYear;
+  const dateString = currentYear + "-" + (currentMonth + 1) + "-" + currentDayOfMonth;
+
+  return dateString
 }
 
 function pickColor() {
   color(Math.random())
 }
 //takes in single entity's data response and charts it
-function drawTicker(response) {
-  let xData = response.map(ticker => ticker.Date)
-  // console.log("xdata is " + xData);
-  let yData = response.map(ticker => ticker.Close)
-  let label = response[0].Name
-  // console.log("label is " + label);
-  var layout = { title: label };
-  var config = { responsive: true }
-  var trace1 = {
-    type: "scatter",
-    mode: "lines",
-    name: label,
-    x: xData,
-    y: yData,
-    line: { color: '#17BECF' }
-  }
-  var data = [trace1]
-  Plotly.newPlot('line', data, layout, config);
-  tickerNames.push(response[0].Name)
+// function drawTicker(response) {
+//   let xData = response.map(ticker => ticker.Date)
+//   // console.log("xdata is " + xData);
+//   let yData = response.map(ticker => ticker.Close)
+//   let label = response[0].Name
+//   // console.log("label is " + label);
+//   var layout = { title: "Tickers" };
+//   var config = { responsive: true }
+//   var trace1 = {
+//     type: "scatter",
+//     mode: "lines",
+//     name: label,
+//     x: xData,
+//     y: yData,
+//     line: { color: '#17BECF' }
+//   }
+//   var data = [trace1]
+//   Plotly.newPlot('line', data, layout, config);
+//   tickerNames.push(response[0].Name)
+//   // console.log("lineTickers in memory below")
+//   // console.log(tickerNames)
+// }
 
-  // console.log("lineTickers in memory below")
-  // console.log(tickerNames)
-
-}
-
-// draw ticker with percent change
-function drawTickerper(response) {
-  let xData = response.map(ticker => ticker.Date)
-  // console.log("ydata is " + yData);
-  let yData = response.map(ticker => ticker.ClosePerChange)
-  let label = response[0].Name
-  // console.log("label is " + label);
-  var layout = { title: label};
-  var config = { responsive: true }
-  var trace1 = {
-    type: "scatter",
-    mode: "lines",
-    name: label,
-    x: xData,
-    y: yData,
-    line: { color: '#17BECF' }
-  }
-  var data = [trace1]
-  Plotly.newPlot('lineper', data, layout, config);
-  tickerNames.push(response[0].Name)
-
-  // console.log("lineTickers in memory below")
-  // console.log(tickerNames)
-
-}
 init();
 
 function resetLines() {
@@ -357,10 +383,8 @@ function buildTable2(response) {
   tableData = row.append('td')
 }
 
-
-
 function toAbout() {
-  d3.json("http://127.0.0.1:5000/about")
+  d3.json("/about")
 }
 
 function drawBubble(response) {
@@ -414,16 +438,15 @@ function drawTree(response) {
   d3.select('#tree').node().appendChild(chart);
 }
 
-// draw multiline func
 function drawMultiLines(response) {
   chart = LineChart(response, {
     x: d => Date.parse(d.Date),
     y: d => d.Close,
     z: d => d.Name,
-    yLabel: "TreeMap",
-    width: 2000,
-    height: 900
-    // color: "steelblue"
+    yLabel: "Price",
+    width: 1200,
+    height: 600,
+    color: d => d.Sector
   })
 
   d3.select('#multiline').selectAll("*").remove();
@@ -433,7 +456,37 @@ function drawMultiLines(response) {
   // response.forEach(element => console.log('test print ' + element.Name));
 
 }
+function color(sector) {
+  if (sector == "Energy") {
+    return "steelblue"
+  }
+  else return "red"
+}
+// draw ticker with percent change
+function drawTickerper(response) {
+  let xData = response.map(ticker => ticker.Date)
+  // console.log("ydata is " + yData);
+  let yData = response.map(ticker => ticker.ClosePerChange)
+  let label = response[0].Name
+  // console.log("label is " + label);
+  var layout = { title: label };
+  var config = { responsive: true }
+  var trace1 = {
+    type: "scatter",
+    mode: "lines",
+    name: label,
+    x: xData,
+    y: yData,
+    line: { color: '#17BECF' }
+  }
+  var data = [trace1]
+  Plotly.newPlot('multilineper', data, layout, config);
+  // tickerNames.push(response[0].Name)
 
+  // console.log("lineTickers in memory below")
+  // console.log(tickerNames)
+
+}
 //draw multiline func with close percent change
 function drawMultiLinesPer(response) {
   chart = LineChart(response, {
@@ -452,272 +505,5 @@ function drawMultiLinesPer(response) {
   //good iterative code
   // response.forEach(element => console.log('test print ' + element.Name));
 
-}
-function color(sector) {
-  if (sector == "Energy") {
-    return "steelblue"
-  }
-  else return "red"
-}
-// Copyright 2021 Observable, Inc.
-// Released under the ISC license.
-// https://observablehq.com/@d3/multi-line-chart
-function LineChart(data, {
-  x = ([x]) => x, // given d in data, returns the (temporal) x-value
-  y = ([, y]) => y, // given d in data, returns the (quantitative) y-value
-  z = () => 1, // given d in data, returns the (categorical) z-value
-  title, // given d in data, returns the title text
-  defined, // for gaps in data
-  curve = d3.curveLinear, // method of interpolation between points
-  marginTop = 20, // top margin, in pixels
-  marginRight = 30, // right margin, in pixels
-  marginBottom = 30, // bottom margin, in pixels
-  marginLeft = 40, // left margin, in pixels
-  width = 640, // outer width, in pixels
-  height = 400, // outer height, in pixels
-  xType = d3.scaleUtc, // type of x-scale
-  xDomain, // [xmin, xmax]
-  xRange = [marginLeft, width - marginRight], // [left, right]
-  yType = d3.scaleLinear, // type of y-scale
-  yDomain, // [ymin, ymax]
-  yRange = [height - marginBottom, marginTop], // [bottom, top]
-  yFormat, // a format specifier string for the y-axis
-  yLabel, // a label for the y-axis
-  zDomain, // array of z-values
-  // color = "currentColor", // stroke color of line, as a constant or a function of *z*
-  color = color => {
-    if (z == "Energy") {
-      return "steelblue"
-    }
-    else return "red"
-  },
-  strokeLinecap, // stroke line cap of line
-  strokeLinejoin, // stroke line join of line
-  strokeWidth = 1.5, // stroke width of line
-  strokeOpacity, // stroke opacity of line
-  mixBlendMode = "multiply", // blend mode of lines
-  voronoi // show a Voronoi overlay? (for debugging)
-} = {}) {
-  // Compute values.
-  const X = d3.map(data, x);
-  const Y = d3.map(data, y);
-  const Z = d3.map(data, z);
-  const O = d3.map(data, d => d);
-  if (defined === undefined) defined = (d, i) => !isNaN(X[i]) && !isNaN(Y[i]);
-  const D = d3.map(data, defined);
-
-  // Compute default domains, and unique the z-domain.
-  if (xDomain === undefined) xDomain = d3.extent(X);
-  if (yDomain === undefined) yDomain = [0, d3.max(Y, d => typeof d === "string" ? +d : d)];
-  if (zDomain === undefined) zDomain = Z;
-  zDomain = new d3.InternSet(zDomain);
-
-  // Omit any data not present in the z-domain.
-  const I = d3.range(X.length).filter(i => zDomain.has(Z[i]));
-
-  // Construct scales and axes.
-  const xScale = xType(xDomain, xRange);
-  const yScale = yType(yDomain, yRange);
-  const xAxis = d3.axisBottom(xScale).ticks(width / 80).tickSizeOuter(0);
-  const yAxis = d3.axisLeft(yScale).ticks(height / 60, yFormat);
-
-  // Compute titles.
-  const T = title === undefined ? Z : title === null ? null : d3.map(data, title);
-
-  // Construct a line generator.
-  const line = d3.line()
-    .defined(i => D[i])
-    .curve(curve)
-    .x(i => xScale(X[i]))
-    .y(i => yScale(Y[i]));
-
-  const svg = d3.create("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
-    .style("-webkit-tap-highlight-color", "transparent")
-    .on("pointerenter", pointerentered)
-    .on("pointermove", pointermoved)
-    .on("pointerleave", pointerleft)
-    .on("touchstart", event => event.preventDefault());
-
-  // An optional Voronoi display (for fun).
-  if (voronoi) svg.append("path")
-    .attr("fill", "none")
-    .attr("stroke", "#ccc")
-    .attr("d", d3.Delaunay
-      .from(I, i => xScale(X[i]), i => yScale(Y[i]))
-      .voronoi([0, 0, width, height])
-      .render());
-
-  svg.append("g")
-    .attr("transform", `translate(0,${height - marginBottom})`)
-    .call(xAxis);
-
-  svg.append("g")
-    .attr("transform", `translate(${marginLeft},0)`)
-    .call(yAxis)
-    .call(g => g.select(".domain").remove())
-    .call(voronoi ? () => { } : g => g.selectAll(".tick line").clone()
-      .attr("x2", width - marginLeft - marginRight)
-      .attr("stroke-opacity", 0.1))
-    .call(g => g.append("text")
-      .attr("x", -marginLeft)
-      .attr("y", 10)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "start")
-      .text(yLabel));
-
-  const path = svg.append("g")
-    .attr("fill", "none")
-    .attr("stroke", typeof color === "string" ? color : null)
-    .attr("stroke-linecap", strokeLinecap)
-    .attr("stroke-linejoin", strokeLinejoin)
-    .attr("stroke-width", strokeWidth)
-    .attr("stroke-opacity", strokeOpacity)
-    .selectAll("path")
-    .data(d3.group(I, i => Z[i]))
-    .join("path")
-    .style("mix-blend-mode", mixBlendMode)
-    .attr("stroke", typeof color === "function" ? ([z]) => color(z) : null)
-    .attr("d", ([, I]) => line(I));
-
-  const dot = svg.append("g")
-    .attr("display", "none");
-
-  dot.append("circle")
-    .attr("r", 2.5);
-
-  dot.append("text")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", 10)
-    .attr("text-anchor", "middle")
-    .attr("y", -8);
-
-  function pointermoved(event) {
-    const [xm, ym] = d3.pointer(event);
-    const i = d3.least(I, i => Math.hypot(xScale(X[i]) - xm, yScale(Y[i]) - ym)); // closest point
-    path.style("stroke", ([z]) => Z[i] === z ? null : "#ddd").filter(([z]) => Z[i] === z).raise();
-    dot.attr("transform", `translate(${xScale(X[i])},${yScale(Y[i])})`);
-    if (T) dot.select("text").text(T[i]);
-    svg.property("value", O[i]).dispatch("input", { bubbles: true });
-  }
-
-  function pointerentered() {
-    path.style("mix-blend-mode", null).style("stroke", "#ddd");
-    dot.attr("display", null);
-  }
-
-  function pointerleft() {
-    path.style("mix-blend-mode", mixBlendMode).style("stroke", null);
-    dot.attr("display", "none");
-    svg.node().value = null;
-    svg.dispatch("input", { bubbles: true });
-  }
-
-  return Object.assign(svg.node(), { value: null });
-}
-
-// Copyright 2021 Observable, Inc.
-// Released under the ISC license.
-// https://observablehq.com/@d3/bubble-chart
-function BubbleChart(data, {
-  name = ([x]) => x, // alias for label
-  label = name, // given d in data, returns text to display on the bubble
-  value = ([, y]) => y, // given d in data, returns a quantitative size
-  group, // given d in data, returns a categorical value for color
-  title, // given d in data, returns text to show on hover
-  link, // given a node d, its link (if any)
-  linkTarget = "_blank", // the target attribute for links, if any
-  width = 640, // outer width, in pixels
-  height = width, // outer height, in pixels
-  padding = 3, // padding between circles
-  margin = 1, // default margins
-  marginTop = margin, // top margin, in pixels
-  marginRight = margin, // right margin, in pixels
-  marginBottom = margin, // bottom margin, in pixels
-  marginLeft = margin, // left margin, in pixels
-  groups, // array of group names (the domain of the color scale)
-  colors = d3.schemeTableau10, // an array of colors (for groups)
-  fill = "#ccc", // a static fill color, if no group channel is specified
-  fillOpacity = 0.7, // the fill opacity of the bubbles
-  stroke, // a static stroke around the bubbles
-  strokeWidth, // the stroke width around the bubbles, if any
-  strokeOpacity, // the stroke opacity around the bubbles, if any
-} = {}) {
-  // Compute the values.
-  const D = d3.map(data, d => d);
-  const V = d3.map(data, value);
-  const G = group == null ? null : d3.map(data, group);
-  const I = d3.range(V.length).filter(i => V[i] > 0);
-
-  // Unique the groups.
-  if (G && groups === undefined) groups = I.map(i => G[i]);
-  groups = G && new d3.InternSet(groups);
-
-  // Construct scales.
-  const color = G && d3.scaleOrdinal(groups, colors);
-
-  // Compute labels and titles.
-  const L = label == null ? null : d3.map(data, label);
-  const T = title === undefined ? L : title == null ? null : d3.map(data, title);
-
-  // Compute layout: create a 1-deep hierarchy, and pack it.
-  const root = d3.pack()
-    .size([width - marginLeft - marginRight, height - marginTop - marginBottom])
-    .padding(padding)
-    (d3.hierarchy({ children: I })
-      .sum(i => V[i]));
-
-  const svg = d3.create("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [-marginLeft, -marginTop, width, height])
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
-    .attr("fill", "currentColor")
-    .attr("font-size", 10)
-    .attr("font-family", "sans-serif")
-    .attr("text-anchor", "middle");
-
-  const leaf = svg.selectAll("a")
-    .data(root.leaves())
-    .join("a")
-    .attr("xlink:href", link == null ? null : (d, i) => link(D[d.data], i, data))
-    .attr("target", link == null ? null : linkTarget)
-    .attr("transform", d => `translate(${d.x},${d.y})`);
-
-  leaf.append("circle")
-    .attr("stroke", stroke)
-    .attr("stroke-width", strokeWidth)
-    .attr("stroke-opacity", strokeOpacity)
-    .attr("fill", G ? d => color(G[d.data]) : fill == null ? "none" : fill)
-    .attr("fill-opacity", fillOpacity)
-    .attr("r", d => d.r);
-
-  if (T) leaf.append("title")
-    .text(d => T[d.data]);
-
-  if (L) {
-    // A unique identifier for clip paths (to avoid conflicts).
-    const uid = `O-${Math.random().toString(16).slice(2)}`;
-
-    leaf.append("clipPath")
-      .attr("id", d => `${uid}-clip-${d.data}`)
-      .append("circle")
-      .attr("r", d => d.r);
-
-    leaf.append("text")
-      .attr("clip-path", d => `url(${new URL(`#${uid}-clip-${d.data}`, location)})`)
-      .selectAll("tspan")
-      .data(d => `${L[d.data]}`.split(/\n/g))
-      .join("tspan")
-      .attr("x", 0)
-      .attr("y", (d, i, D) => `${i - D.length / 2 + 0.85}em`)
-      .attr("fill-opacity", (d, i, D) => i === D.length - 1 ? 0.7 : null)
-      .text(d => d);
-  }
-
-  return Object.assign(svg.node(), { scales: { color } });
 }
 
