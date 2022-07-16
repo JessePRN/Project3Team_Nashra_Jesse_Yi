@@ -81,7 +81,7 @@ def namesUnique():
 @app.route("/tickers/all")
 def tickersAll():
     session = Session(engine)
-    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).all()
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector, tickers.ClosePerChange).all()
     all_names = list(np.ravel(tickersAll))
     session.close()
     return jsonify(all_names)
@@ -91,7 +91,7 @@ def tickersAll():
 def tickersSpecific(date):
     date = parser.parse(date)
     session = Session(engine) 
-    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Date == date).all()
+    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector,tickers.ClosePerChange).filter(tickers.Date == date).all()
     tickerDict = [dict(ticker) for ticker in tickersSince]
     session.close()
     return jsonify(tickerDict) 
@@ -109,7 +109,7 @@ def tickersSpecificJesse(date):
 @app.route("/tickers/<start>")
 def tickersStart(start):
     session = Session(engine) 
-    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Date > start).all()
+    tickersSince = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector, tickers.ClosePerChange).filter(tickers.Date > start).all()
     tickersSincePrint = list(np.ravel(tickersSince))
     session.close()
     return jsonify(tickersSincePrint)
@@ -127,7 +127,7 @@ def allSectors():
 @app.route("/tickers/name/<name>")
 def tickersName(name):
     session = Session(engine)
-    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Name == name).all()
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector, tickers.ClosePerChange).filter(tickers.Name == name).all()
     tickerDict = [dict(ticker) for ticker in tickersAll]
     session.close()
     return jsonify(tickerDict)
@@ -136,7 +136,7 @@ def tickersName(name):
 @app.route("/tickers/sector/<sector>")
 def tickersSector(sector):
     session = Session(engine)
-    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector,tickers.ClosePerChange).filter(tickers.Sector == sector).all()
     tickerDict = [dict(ticker) for ticker in tickersAll]
     session.close()
     return jsonify(tickerDict)    
@@ -154,7 +154,7 @@ def tickersSectors(sectors):
     for sector in my_list:
         print(sector)
         print(type(sector))
-        tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
+        tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector,tickers.ClosePerChange).filter(tickers.Sector == sector).all()
         tempDict = [dict(ticker) for ticker in tickersAll]
         tickerDict = tickerDict + tempDict
     # tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).filter(tickers.Sector == sector).all()
