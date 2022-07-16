@@ -81,7 +81,7 @@ def namesUnique():
 @app.route("/tickers/all")
 def tickersAll():
     session = Session(engine)
-    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector).all()
+    tickersAll = session.query(tickers.Name, tickers.Date, tickers.Ticker, tickers.Close, tickers.Sector, tickers.Close%Change).all()
     all_names = list(np.ravel(tickersAll))
     session.close()
     return jsonify(all_names)
