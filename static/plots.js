@@ -68,17 +68,19 @@ function init() {
   // code to populate menus on initial load
   
   let onLoadSector = "Information Technology"
-  let onLoadTicker = "Netflix"
-  let onLoadDate = '2020-07-13'
+  let onLoadTicker = "3M"
+  let onLoadDate = '2020-07-25'
 
   //populate multichart on initial load for appearances
   d3.json("http://127.0.0.1:5000/tickers/sector/" + onLoadSector).then(function (response) {
     drawMultiLines(response)
+    drawMultiLinesPer(response)
   })
   //populate linechart on init
 
   d3.json("http://127.0.0.1:5000/tickers/name/" + onLoadTicker).then(function (response) {
     drawTicker(response)
+    drawTickerper(response)
     buildTable(response)
   })
   //populate bubblechart on init
@@ -102,6 +104,7 @@ function stockChanged() {
     console.log("tickerChanged response below");
     console.log(response);
     drawTicker(response)
+    drawTickerper(response)
     buildTable(response)
   })
 }
@@ -116,6 +119,7 @@ function stockChangedMultiple() {
     console.log(response);
 
     drawTickerMultiple(response)
+    drawMultiLinesPer(response)
     buildTable(response)
   })
 }
@@ -142,6 +146,7 @@ function cryptoChanged() {
     console.log("cryptoChanged response below");
     console.log(response);
     drawTicker(response)
+    drawTickerper(response)
     buildTable(response)
   })
 }
@@ -251,7 +256,7 @@ function drawTicker(response) {
   let yData = response.map(ticker => ticker.Close)
   let label = response[0].Name
   // console.log("label is " + label);
-  var layout = { title: "<b>TICKERS ZOMGBBQ</b>" };
+  var layout = { title: label };
   var config = { responsive: true }
   var trace1 = {
     type: "scatter",
@@ -270,6 +275,31 @@ function drawTicker(response) {
 
 }
 
+// draw ticker with percent change
+function drawTickerper(response) {
+  let xData = response.map(ticker => ticker.Date)
+  // console.log("ydata is " + yData);
+  let yData = response.map(ticker => ticker.ClosePerChange)
+  let label = response[0].Name
+  // console.log("label is " + label);
+  var layout = { title: label};
+  var config = { responsive: true }
+  var trace1 = {
+    type: "scatter",
+    mode: "lines",
+    name: label,
+    x: xData,
+    y: yData,
+    line: { color: '#17BECF' }
+  }
+  var data = [trace1]
+  Plotly.newPlot('lineper', data, layout, config);
+  tickerNames.push(response[0].Name)
+
+  // console.log("lineTickers in memory below")
+  // console.log(tickerNames)
+
+}
 init();
 
 function resetLines() {
@@ -384,6 +414,7 @@ function drawTree(response) {
   d3.select('#tree').node().appendChild(chart);
 }
 
+// draw multiline func
 function drawMultiLines(response) {
   chart = LineChart(response, {
     x: d => Date.parse(d.Date),
@@ -397,6 +428,26 @@ function drawMultiLines(response) {
 
   d3.select('#multiline').selectAll("*").remove();
   d3.select('#multiline').node().appendChild(chart);
+
+  //good iterative code
+  // response.forEach(element => console.log('test print ' + element.Name));
+
+}
+
+//draw multiline func with close percent change
+function drawMultiLinesPer(response) {
+  chart = LineChart(response, {
+    x: d => Date.parse(d.Date),
+    y: d => d.ClosePerChange,
+    z: d => d.Name,
+    yLabel: "TreeMap",
+    width: 2000,
+    height: 900
+    // color: "steelblue"
+  })
+
+  d3.select('#multilineper').selectAll("*").remove();
+  d3.select('#multilineper').node().appendChild(chart);
 
   //good iterative code
   // response.forEach(element => console.log('test print ' + element.Name));
