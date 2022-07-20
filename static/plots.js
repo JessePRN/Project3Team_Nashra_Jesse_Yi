@@ -49,17 +49,14 @@ function init() {
   d3.json("/dates/unique").then(function (response) {
     // console.log("unique date api response below");
     // console.log(response);
-    // response = response.sort((b, a) => b - a).reverse()
     
     response = response.map(formatDate => new Date(formatDate).getFullYear() + "-" +
     String(new Date(formatDate).getMonth()+1).padStart(2, '0') +
     "-" + String(new Date(formatDate).getDate()).padStart(2, '0'))
-
     response.sort(function(a,b) {
       a = a.split('-').join('');
       b = b.split('-').join('');
-      // return a > b ? 1 : a < b ? -1 : 0;
-      return a.localeCompare(b);         // <-- alternative 
+      return a.localeCompare(b);
     });
     response.reverse()
     // Append an option in the dropdown
@@ -92,12 +89,10 @@ function init() {
   d3.json("/tickers/sector/" + onLoadSector).then(function (response) {
     drawMultiLines(response)
   })
-  //populate linechart on init
-
+  //populate linechart on ini
   d3.json("/tickers/name/" + onLoadTicker).then(function (response) {
     drawTickerMultiple(response)
     drawTickerper(response)
-
     buildTable(response)
   })
   d3.json("/tickers/name/" + onLoadCrypto).then(function (response) {
@@ -115,31 +110,14 @@ function init() {
 
 }//end init
 
-
-
-// called by stock ticker dropdown
-// function stockChanged() {
-//   let dropdownMenu = d3.select("#selStock");
-//   let tickerName = dropdownMenu.property("value");
-//   console.log("stock ticker selected value is " + tickerName)
-//   d3.json("/tickers/name/" + tickerName).then(function (response) {
-//     // once we get a response, do stuff
-//     console.log("tickerChanged response below");
-//     console.log(response);
-//     drawTicker(response)
-//     buildTable(response)
-//   })
-// }
-
 function stockChangedMultiple() {
   let dropdownMenu = d3.select("#selStock");
   let tickerName = dropdownMenu.property("value");
   console.log("stock ticker selected value is " + tickerName)
   d3.json("/tickers/name/" + tickerName).then(function (response) {
-    // once we get a response, do stuff
-    console.log("tickerChangedMulti response below");
-    console.log(response);
-
+    // console.log("tickerChangedMulti response below");
+    // console.log(response);
+    addTickerSelected(tickerName)
     drawTickerMultiple(response)
     buildTable(response)
   })
@@ -150,39 +128,13 @@ function cryptoChangedMultiple() {
   let tickerName = dropdownMenu.property("value");
   console.log("crypto ticker selected value is " + tickerName)
   d3.json("/tickers/name/" + tickerName).then(function (response) {
-    // once we get a response, do stuff
-    console.log("cryptoChangedMulti response below");
-    console.log(response);
+    // console.log("cryptoChangedMulti response below");
+    // console.log(response);
+    addTickerSelected(tickerName)
     drawTickerMultiple(response)
     buildTable2(response)
   })
 }
-
-// called by crypto dropdown, DEPRECATED
-// function cryptoChanged() {
-//   let dropdownMenu = d3.select("#selCrypto");
-//   let tickerName = dropdownMenu.property("value");
-//   console.log("crypto selected value is " + tickerName)
-//   d3.json("/tickers/name/" + tickerName).then(function (response) {
-//     console.log("cryptoChanged response below");
-//     console.log(response);
-//     drawTicker(response)
-//     buildTable(response)
-//   })
-// }
-
-//called by sector dropdown, DEPRECATED
-// function sectorChanged() {
-//   let dropdownMenu = d3.select("#selSector");
-//   let sector = dropdownMenu.property("value");
-//   console.log("Selected value is " + sector)
-//   d3.json("/tickers/sector/" + sector).then(function (response) {
-//     console.log("sectorChanged response below");
-//     console.log(response);
-//     // todo: handle response with multiple ticker entities
-//     drawMultiLines(response)
-//   })
-// }
 
 //called by sector dropdown
 function sectorChangedMulti() {
@@ -230,8 +182,8 @@ function dateSelectForMap() {
   let joinDate = slicedDate.join(" ")
   // console.log("date selected value is " + joinDate)
   d3.json("/tickers/date/jesse/" + joinDate).then(function (response) {
-    console.log("dateUnique response below");
-    console.log(response);
+    // console.log("dateUnique response below");
+    // console.log(response);
     drawTree(response)
   });
 }
@@ -239,8 +191,8 @@ function dateSelectForMap() {
 function drawTickerMultiple(response) {
   stockData = []
   tickerData.push(response)
-  console.log("drawTickerMultiple tickerdata below");
-  console.log(tickerData);
+  // console.log("drawTickerMultiple tickerdata below");
+  // console.log(tickerData);
   var layout = { title: "Tickers" }
   var config = { responsive: true }
   for (index = 0; index < tickerData.length; index++) {
@@ -279,8 +231,8 @@ function drawTickerMultiple(response) {
     }
     stockData.push(trace1)
   }//end for
-  console.log("stockdata below")
-  console.log(stockData)
+  // console.log("stockdata below")
+  // console.log(stockData)
   d3.select('#line').selectAll("*").remove();
   Plotly.newPlot('line', stockData, layout, config);
 
@@ -293,43 +245,25 @@ function cleanDate(date) {
   const currentDayOfMonth = timestamp.getDate();
   const currentMonth = timestamp.getMonth(); // Be careful! January is 0, not 1
   const currentYear = timestamp.getFullYear();
-  // const dateString = currentDayOfMonth + "-" + (currentMonth + 1) + "-" + currentYear;
   const dateString = currentYear + "-" + (currentMonth + 1) + "-" + currentDayOfMonth;
-
   return dateString
 }
 
 function pickColor() {
   color(Math.random())
 }
-//takes in single entity's data response and charts it
-// function drawTicker(response) {
-//   let xData = response.map(ticker => ticker.Date)
-//   // console.log("xdata is " + xData);
-//   let yData = response.map(ticker => ticker.Close)
-//   let label = response[0].Name
-//   // console.log("label is " + label);
-//   var layout = { title: "Tickers" };
-//   var config = { responsive: true }
-//   var trace1 = {
-//     type: "scatter",
-//     mode: "lines",
-//     name: label,
-//     x: xData,
-//     y: yData,
-//     line: { color: '#17BECF' }
-//   }
-//   var data = [trace1]
-//   Plotly.newPlot('line', data, layout, config);
-//   tickerNames.push(response[0].Name)
-//   // console.log("lineTickers in memory below")
-//   // console.log(tickerNames)
-// }
+function addTickerSelected(ticker) {
+  console.log("addTickerSelected being executed on " + ticker)
+  d3.select("#selTicker")
+  .append("button")
+  .html(ticker)
+  .on("click", console.log("you clicked me TODO Remove me"))
+}
 
 init();
 
 function resetLines() {
-  console.log("resetlines executing")
+  // console.log("resetlines executing")
   d3.select('#line').selectAll("*").remove();
   tickerData = []
 }

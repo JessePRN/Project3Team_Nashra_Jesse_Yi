@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
     rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
     crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="./template/style.css">
+
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.js"
@@ -16,22 +18,19 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
-<body style="background-color:#1F2833">
+<body>
   <!-- nav bar -->
-  <div class="m-4" style="border:1px; border-style:solid; border-color:#2FFBEE">
-    <nav class="navbar navbar-expand-sm " style="background-color:#1F2833">
+  <div class="m-4">
+    <nav class="navbar navbar-expand-sm ">
       <div class="container-fluid">
-        <a href="index.html" class="navbar-brand mb-0 h1" style="color:#2FFBEE">Home</a>
+        <a href="index.html" class="navbar-brand mb-0 h1">Home</a>
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div id="navbarCollapse" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="nav-item">
-
-              <a href="about" class="nav-link" style="color:#2FFBEE">About The Team </a>
-              <!-- <button style="color:#2FFBEE" type="button" class="btn" onclick="toAbout()">About Us</button> -->
-
+              <a href="about" class="nav-link">About The Team </a>
             </li>
           </ul>
         </div>
@@ -43,41 +42,50 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12 jumbotron text-center">
-        <h1 style="color:#2FFBEE">Crypto & Stock Trends</h1>
-        <p style="color:#2FFBEE">Use the interactive charts below to explore historic trends around stock and crypto
+        <h1>Stock & Crypto Trends</h1>
+        <p>Use the interactive charts below to explore historic trends around stock and crypto
           prices.</p>
       </div>
     </div>
 
-    <!-- dropdown menu for assets -->
     <br />
     <div class="row">
-      <div class="col-sm-6">
-        <div class="card form-control"
-          style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+      <!-- dropdown menu for stocks -->
+      <div class="col-sm-4">
+        <div class="card form-control">
           <div class="card-body">
-            <h5 class="card-title" style="color:#2FFBEE">Select Stock</h5>
-            <p class="card-text" style="color:#2FFBEE">Select the Stock you would like to analyze. </p>
+            <h5 class="card-title">Select Stock</h5>
+            <p class="card-text">Select the Stock you would like to analyze. </p>
             <select id="selStock" onchange="stockChangedMultiple(this.value)"></select>
-
           </div>
         </div>
       </div>
-      <div class="col-sm-6">
-        <div class="card form-control"
-          style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+      <!-- dropdown menu for stocks -->
+      <div class="col-sm-4">
+        <div class="card form-control">
           <div class="card-body">
-
-            <h5 class="card-title" style="color:#2FFBEE">Select Crypto</h5>
-            <p class="card-text" style="color:#2FFBEE">Select a Crypto you would like to analyze.</p>
+            <h5 class="card-title">Select Crypto</h5>
+            <p class="card-text">Select a Crypto you would like to analyze.</p>
             <select id="selCrypto" onchange="cryptoChangedMultiple(this.value)"></select>
           </div>
         </div>
       </div>
-    </div>
-    <div class="container">
-      <div class="row">
+
+      <!-- dropdown selection -->
+      <div class="col-sm-4">
+        <div class="card form-control">
+          <div class="card-body">
+            <h5 class="card-title">Tickers</h5>
+            <button type="button" class="btn" onclick="resetLines()">Reset</button>
+
+            <div class="card-text" id="selTicker">
+
+            <!-- <p class="card-text">Select a Crypto you would like to analyze.</p> -->
+          </div>
+        </div>
       </div>
+
+
     </div>
 
     <!-- line chart -->
@@ -85,27 +93,26 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <h1 style="color:#2FFBEE"> Daily Closing Price</h1>
+          <h1> Daily Closing Price</h1>
         </div>
-        <div class="col-md-6">
-          <button style="color:#2FFBEE" type="button" class="btn" onclick="resetLines()">Reset</button>
-        </div>
+        <!-- <div class="col-md-6">
+        </div> -->
       </div>
       <div id="line" class="col-md-12"></div>
     </div>
     <br />
-    <div style="color:#2FFBEE" id="multilineper"></div>
+    <div id="multilineper"></div>
+
     <!-- Latest Stock Price Table -->
     <div class="row">
       <div class="col-sm-6">
-        <div class="card form-control"
-          style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+        <div class="card form-control">
           <div class="card-body">
             <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3 class="panel-title" style="color:#2FFBEE">Latest Stock Price</h3>
+                <h3 class="panel-title">Latest Stock Price</h3>
               </div>
-              <div style="color:#2FFBEE" id="table" class="panel-body"></div>
+              <div id="table" class="panel-body"></div>
             </div>
           </div>
         </div>
@@ -113,19 +120,18 @@
       <!-- Latest Crypto Price Table -->
 
       <div class="col-sm-6">
-        <div class="card form-control"
-          style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+        <div class="card form-control">
           <div class="card-body">
             <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3 class="panel-title" style="color:#2FFBEE">Latest Crypto Price</h3>
+                <h3 class="panel-title">Latest Crypto Price</h3>
               </div>
-              <div style="color:#2FFBEE" id="table2" class="panel-body"></div>
+              <div id="table2" class="panel-body"></div>
             </div>
           </div>
         </div>
       </div>
-      <div style="color:#2FFBEE" id="table" class="panel-body"></div>
+      <div id="table" class="panel-body"></div>
     </div>
     <div class="container">
       <div class="row">
@@ -134,15 +140,15 @@
       </div>
       <br />
       <br />
-      <hr class="dashed" style="color:#2FFBEE">
+      <hr class="dashed">
 
       <br />
       <div class="row">
         <div class="col-sm-4">
-          <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+          <div class="card">
             <div class="card-body">
-              <h5 class="card-title" style="color:#2FFBEE">Select Sector</h5>
-              <p class="card-text" style="color:#2FFBEE">Select the Sector you would like to analyze.</p>
+              <h5 class="card-title">Select Sector</h5>
+              <p class="card-text">Select the Sector you would like to analyze.</p>
               <select id="selSector" onchange="sectorChangedMulti(this.value)"></select>
             </div>
           </div>
@@ -154,26 +160,26 @@
 
         <!-- multiline chart -->
         <div class="card">
-          <div style="color:#2FFBEE" id="multiline"></div>
+          <div id="multiline"></div>
         </div>
         <br />
-        <hr class="dashed" style="color:#2FFBEE">
+        <hr class="dashed">
         <br />
         <!-- multiline chart w/ per change -->
-        
+
         <br />
-        <hr class="dashed" style="color:#2FFBEE">
+        <hr class="dashed">
         <br />
         <div class="col-md-6">
-          <h1 style="color:#2FFBEE">Bubble Chart Analysis</h1>
+          <h1>Bubble Chart Analysis</h1>
           <br />
         </div>
         <!-- date selector for bubble chart -->
         <div class="row">
           <div class="col-sm-2">
-            <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+            <div class="card">
               <div class="card-body">
-                <h5 style="color:#2FFBEE">Select Date</h5>
+                <h5>Select Date</h5>
                 <select id="selDataset" onchange="dateSelect(this.value)"></select>
               </div>
             </div>
@@ -182,31 +188,31 @@
         </div>
         <!-- bubble chart -->
         <hr class="dashed">
-        <div class="container">
+        <div class="card">
           <div class="row">
             <div class="col-md-12">
               <div id="bubble"></div>
             </div>
           </div>
         </div>
-        <hr class="dashed" style="color:#2FFBEE">
-        <br/>
-                <!-- date selector for treemap -->
-                <div class="col-md-6">
-                  <h1 style="color:#2FFBEE">Tree Chart Analysis</h1>
-                  <br/>
-                </div> 
+        <hr class="dashed">
+        <br />
+        <!-- date selector for treemap -->
+        <div class="col-md-6">
+          <h1>Tree Chart Analysis</h1>
+          <br />
+        </div>
         <div class="row">
           <div class="col-sm-2">
-            <div class="card" style="border:.5px; border-style:solid; border-color:#2FFBEE; background-color:#1F2833">
+            <div class="card">
               <div class="card-body">
-                <h5 style="color:#2FFBEE">Select Date</h5>
+                <h5>Select Date</h5>
                 <select id="selDatasetForMap" onchange="dateSelectForMap(this.value)"></select>
               </div>
             </div>
           </div>
-
         </div>
+
         <!-- tree map -->
         <hr class="dashed">
         <div class="container">
@@ -216,11 +222,9 @@
             </div>
           </div>
         </div>
-
-
         <script src="./static/plots.js"></script>
-        <script src="./static/sampleTickers.js"></script>
         <script src="./static/observable.js"></script>
+        <!-- <script src="./static/sampleTickers.js"></script> for testing -->
 
 </body>
 
