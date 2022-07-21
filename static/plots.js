@@ -4,116 +4,10 @@ let tickerSectors = []
 let tickerDataDict = {}
 let stockData = []
 
-function init() {
-
-  // populating the stocks dropdown with unique names from stocks.sqlite
-  d3.json("/tickers/names/unique").then(function (response) {
-    // console.log("unique ticker names api response below");
-    // console.log(response);
-    response = response.sort()
-    // Append an option in the dropdown
-    response.forEach(function (name) {
-      d3.select('#selStock')
-        .append('option')
-        .text(name)
-    });
-  });
-
-  //populating dropdown with crypto names
-  d3.json("/crypto/names/unique").then(function (response) {
-    // console.log("unique crypto names api response below");
-    // console.log(response);
-    response = response.sort()
-    // Append an option in the dropdown
-    response.forEach(function (name) {
-      d3.select('#selCrypto')
-        .append('option')
-        .text(name)
-    });
-  });
-
-  //populating dropdown with sectors
-  d3.json("/tickers/sector/unique").then(function (response) {
-    // console.log("unique sectors api response below");
-    // console.log(response);
-    response = response.sort()
-    // Append an option in the dropdown
-    response.forEach(function (name) {
-      d3.select('#selSector')
-        .append('option')
-        .text(name)
-    });
-  });
-
-  // populate bubble dropdown with unique dates
-  d3.json("/dates/unique").then(function (response) {
-    // console.log("unique date api response below");
-    // console.log(response);
-    
-    response = response.map(formatDate => new Date(formatDate).getFullYear() + "-" +
-    String(new Date(formatDate).getMonth()+1).padStart(2, '0') +
-    "-" + String(new Date(formatDate).getDate()).padStart(2, '0'))
-    response.sort(function(a,b) {
-      a = a.split('-').join('');
-      b = b.split('-').join('');
-      return a.localeCompare(b);
-    });
-    response.reverse()
-    // Append an option in the dropdown
-    response.forEach(function (date) {
-      // formatDate = new Date(date)
-      // date2 = formatDate.getFullYear() + "-" +
-      //   String(formatDate.getMonth()).padStart(2, '0') +
-      //   "-" + String(formatDate.getDate()).padStart(2, '0')
-
-      // date2 = date2.sort((b, a) => b - a).reverse()
-
-      d3.select('#selDataset')
-        .append('option')
-        .text(date)
-      // populate treemap dropdown with unique dates
-      d3.select('#selDatasetForMap')
-        .append('option')
-        .text(date)
-    });
-  });
-
-  // code to populate menus on initial load
-
-  let onLoadSector = "Information Technology"
-  let onLoadTicker = "Netflix"
-  let onLoadDate = '2020-07-13'
-  let onLoadCrypto = 'Aave USD'
-
-  //populate multichart on initial load for appearances
-  d3.json("/tickers/sector/" + onLoadSector).then(function (response) {
-    drawMultiLines(response)
-  })
-  //populate linechart on ini
-  d3.json("/tickers/name/" + onLoadTicker).then(function (response) {
-    drawTickerMultiple(response)
-    drawTickerper(response)
-    buildTable(response)
-  })
-  d3.json("/tickers/name/" + onLoadCrypto).then(function (response) {
-    drawTickerMultiple(response)
-    buildTable2(response)
-  })
-  //populate bubblechart on init
-  d3.json("/tickers/date/jesse/" + onLoadDate).then(function (response) {
-    drawBubble(response)
-    drawTree(response)
-  })
-
-  // let dropdownMenu = d3.select("#selStock");
-  // dropdownMenu.property("value") = "Netflix"
-
-}//end init
-
 function stockChangedMultiple() {
   let dropdownMenu = d3.select("#selStock");
   let tickerName = dropdownMenu.property("value");
-  console.log("stock ticker selected value is " + tickerName)
+  // console.log("stock ticker selected value is " + tickerName)
   d3.json("/tickers/name/" + tickerName).then(function (response) {
     // console.log("tickerChangedMulti response below");
     // console.log(response);
@@ -240,86 +134,36 @@ function drawTickerMultiple(response) {
   // console.log(tickerNames)
 
 }
-function cleanDate(date) {
-  timestamp = new Date(date)
-  const currentDayOfMonth = timestamp.getDate();
-  const currentMonth = timestamp.getMonth(); // Be careful! January is 0, not 1
-  const currentYear = timestamp.getFullYear();
-  const dateString = currentYear + "-" + (currentMonth + 1) + "-" + currentDayOfMonth;
-  return dateString
-}
 
-function pickColor() {
-  color(Math.random())
-}
+
+
+
 function addTickerSelected(ticker) {
-  console.log("addTickerSelected being executed on " + ticker)
+  // console.log("addTickerSelected being executed on " + ticker)
   d3.select("#selTicker")
-  .append("button")
-  .html(ticker)
-  .on("click", console.log("you clicked me TODO Remove me"))
+    .append("button")
+    .html(ticker)
+    .attr("class", "ticker")
+    .on("click", function (d) {
+      // console.log(d);
+      // console.log(i);
+      // let testval = d3.event.target.childNodes[0].data
+      console.log(d.target.childNodes[0].data);
+    })
+    
 }
 
-init();
 
-function resetLines() {
-  // console.log("resetlines executing")
-  d3.select('#line').selectAll("*").remove();
-  tickerData = []
+
+function removeTickerSelected() {
+  var el = this
+  console.log("removeTickerSelected being executed on " + el)
+  // d3.select("#selTicker")
+  // .append("button")
+  // .html(ticker)
+  // .on("click", console.log("you clicked me TODO Remove me"))
 }
 
-// build table
-function buildTable(response) {
-  // build a table that displays the latest ticker value and date
-  let demoTable = d3.select('#table');
-  //clear table
-  demoTable.html('')
-  //build table
-  let fillTable = demoTable.append("mytable")
-  let row = fillTable.append('tr')
-  let tableData = row.append('td')
-  // populate table
-  let Name = tableData.text('For: ' + response[response.length - 1].Name)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-  let Ticker = tableData.text('Ticker: ' + response[response.length - 1].Ticker)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-  let Price = tableData.text('Close: ' + response[response.length - 1].Close)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-  let Date = tableData.text('Date: ' + response[response.length - 1].Date)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-}
-
-function buildTable2(response) {
-  // build a table that displays the latest ticker value and date
-  let demoTable = d3.select('#table2');
-  //clear table
-  demoTable.html('')
-  //build table
-  let fillTable = demoTable.append("mytable")
-  let row = fillTable.append('tr')
-  let tableData = row.append('td')
-  // populate table
-  let Name = tableData.text('For: ' + response[response.length - 1].Name)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-  let Ticker = tableData.text('Ticker: ' + response[response.length - 1].Ticker)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-  let Price = tableData.text('Close: ' + response[response.length - 1].Close)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-  let Date = tableData.text('Date: ' + response[response.length - 1].Date)
-  row = fillTable.append('tr')
-  tableData = row.append('td')
-}
-
-function toAbout() {
-  d3.json("/about")
-}
 
 function drawBubble(response) {
   let bubbleData = []
@@ -440,4 +284,107 @@ function drawMultiLinesPer(response) {
   // response.forEach(element => console.log('test print ' + element.Name));
 
 }
+init();
 
+function init() {
+
+    // populating the stocks dropdown with unique names from stocks.sqlite
+    d3.json("/tickers/names/unique").then(function (response) {
+      // console.log("unique ticker names api response below");
+      // console.log(response);
+      response = response.sort()
+      // Append an option in the dropdown
+      response.forEach(function (name) {
+        d3.select('#selStock')
+          .append('option')
+          .text(name)
+      });
+    });
+  
+    //populating dropdown with crypto names
+    d3.json("/crypto/names/unique").then(function (response) {
+      // console.log("unique crypto names api response below");
+      // console.log(response);
+      response = response.sort()
+      // Append an option in the dropdown
+      response.forEach(function (name) {
+        d3.select('#selCrypto')
+          .append('option')
+          .text(name)
+      });
+    });
+  
+    //populating dropdown with sectors
+    d3.json("/tickers/sector/unique").then(function (response) {
+      // console.log("unique sectors api response below");
+      // console.log(response);
+      response = response.sort()
+      // Append an option in the dropdown
+      response.forEach(function (name) {
+        d3.select('#selSector')
+          .append('option')
+          .text(name)
+      });
+    });
+  
+    // populate bubble dropdown with unique dates
+    d3.json("/dates/unique").then(function (response) {
+      // console.log("unique date api response below");
+      // console.log(response);
+  
+      response = response.map(formatDate => new Date(formatDate).getFullYear() + "-" +
+        String(new Date(formatDate).getMonth() + 1).padStart(2, '0') +
+        "-" + String(new Date(formatDate).getDate()).padStart(2, '0'))
+      response.sort(function (a, b) {
+        a = a.split('-').join('');
+        b = b.split('-').join('');
+        return a.localeCompare(b);
+      });
+      response.reverse()
+      // Append an option in the dropdown
+      response.forEach(function (date) {
+        d3.select('#selDataset')
+          .append('option')
+          .text(date)
+        // populate treemap dropdown with unique dates
+        d3.select('#selDatasetForMap')
+          .append('option')
+          .text(date)
+      });
+    });
+  
+    // code to populate menus on initial load
+  
+    let onLoadSector = "Information Technology"
+    let onLoadTicker = "Netflix"
+    let onLoadDate = '2022-07-15'
+    let onLoadCrypto = 'Aave USD'
+  
+    //populate multichart on initial load for appearances
+    d3.json("/tickers/sector/" + onLoadSector).then(function (response) {
+      drawMultiLines(response)
+    })
+    //populate linechart on init
+    d3.json("/tickers/name/" + onLoadTicker).then(function (response) {
+      drawTickerMultiple(response)
+      drawTickerper(response)
+      buildTable(response)
+      addTickerSelected(onLoadTicker)
+
+    })
+    d3.json("/tickers/name/" + onLoadCrypto).then(function (response) {
+      drawTickerMultiple(response)
+      buildTable2(response)
+      addTickerSelected(onLoadCrypto)
+
+    })
+    //populate bubblechart on init
+    d3.json("/tickers/date/jesse/" + onLoadDate).then(function (response) {
+      drawBubble(response)
+      drawTree(response)
+    })
+  
+    // let dropdownMenu = d3.select("#selStock");
+    // dropdownMenu.property("value") = "Netflix"
+  
+  }//end init

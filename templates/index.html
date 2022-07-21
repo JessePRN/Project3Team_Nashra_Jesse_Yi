@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
     rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
     crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="./template/style.css">
+  <link rel="stylesheet" type="text/css" href="./static/style.css">
 
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -19,32 +19,32 @@
 </head>
 
 <body>
-  <!-- nav bar -->
-  <div class="m-4">
+  <!-- container -->
+  <div class="container">
+
+    <!-- nav bar -->
     <nav class="navbar navbar-expand-sm ">
-      <div class="container-fluid">
-        <a href="index.html" class="navbar-brand mb-0 h1">Home</a>
-        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div id="navbarCollapse" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="nav-item">
-              <a href="about" class="nav-link">About The Team </a>
-            </li>
-          </ul>
-        </div>
+      <a href="index.html" class="navbar-brand mb-0 h1">Home</a>
+      <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navbarCollapse" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="nav-item">
+            <a href="about" class="nav-link">About The Team </a>
+          </li>
+        </ul>
       </div>
     </nav>
-  </div>
+    <!-- </div> -->
 
-  <!-- jumbotron -->
-  <div class="container">
+    <!-- jumbotron -->
+    <!-- <div class="container-fluid"> -->
+
     <div class="row">
       <div class="col-md-12 jumbotron text-center">
         <h1>Stock & Crypto Trends</h1>
-        <p>Use the interactive charts below to explore historic trends around stock and crypto
-          prices.</p>
+        <p>Use the interactive charts below to explore historic trends around stocks and crypto prices.</p>
       </div>
     </div>
 
@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <!-- dropdown selection -->
+      <!-- tickerboard -->
       <div class="col-sm-4">
         <div class="card form-control">
           <div class="card-body">
@@ -79,32 +79,32 @@
             <button type="button" class="btn" onclick="resetLines()">Reset</button>
 
             <div class="card-text" id="selTicker">
-
-            <!-- <p class="card-text">Select a Crypto you would like to analyze.</p> -->
+              <!-- <p class="card-text">Select a Crypto you would like to analyze.</p> -->
+            </div>
           </div>
         </div>
       </div>
-
-
     </div>
+    <!-- line chart header -->
 
-    <!-- line chart -->
-    <br />
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <h1> Daily Closing Price</h1>
-        </div>
-        <!-- <div class="col-md-6">
-        </div> -->
-      </div>
-      <div id="line" class="col-md-12"></div>
-    </div>
-    <br />
-    <div id="multilineper"></div>
-
-    <!-- Latest Stock Price Table -->
     <div class="row">
+      <div class="col-md-6">
+        <h1> Daily Closing Price</h1>
+      </div>
+    </div>
+    <!-- line chart -->
+    <div class="card">
+      <div id="line"></div>
+    </div>
+
+    <!-- percent change chart -->
+    <div class="card">
+      <div id="multilineper"></div>
+    </div>
+    <!-- detail panels -->
+    <div class="row">
+      <!-- Latest Stock Price Table -->
+
       <div class="col-sm-6">
         <div class="card form-control">
           <div class="card-body">
@@ -118,7 +118,6 @@
         </div>
       </div>
       <!-- Latest Crypto Price Table -->
-
       <div class="col-sm-6">
         <div class="card form-control">
           <div class="card-body">
@@ -131,101 +130,96 @@
           </div>
         </div>
       </div>
-      <div id="table" class="panel-body"></div>
     </div>
-    <div class="container">
-      <div class="row">
-        <br />
-
+    <br />
+    <br />
+    <br />
+    <div class="row">
+      <div class="col-md-6">
+        <h1>Tickers by Sector</h1>
       </div>
-      <br />
-      <br />
-      <hr class="dashed">
+    </div>
+    <!-- category ticker dropdown -->
 
-      <br />
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Select Sector</h5>
-              <p class="card-text">Select the Sector you would like to analyze.</p>
-              <select id="selSector" onchange="sectorChangedMulti(this.value)"></select>
-            </div>
-          </div>
-        </div>
-        <br />
-        <br />
-        <br />
-        <br />
-
-        <!-- multiline chart -->
+    <div class="row">
+      <div class="col-sm-4">
         <div class="card">
-          <div id="multiline"></div>
-        </div>
-        <br />
-        <hr class="dashed">
-        <br />
-        <!-- multiline chart w/ per change -->
-
-        <br />
-        <hr class="dashed">
-        <br />
-        <div class="col-md-6">
-          <h1>Bubble Chart Analysis</h1>
-          <br />
-        </div>
-        <!-- date selector for bubble chart -->
-        <div class="row">
-          <div class="col-sm-2">
-            <div class="card">
-              <div class="card-body">
-                <h5>Select Date</h5>
-                <select id="selDataset" onchange="dateSelect(this.value)"></select>
-              </div>
-            </div>
+          <div class="card-body">
+            <h5 class="card-title">Select Sector</h5>
+            <p class="card-text">Select the Sector you would like to analyze.</p>
+            <select id="selSector" onchange="sectorChangedMulti(this.value)"></select>
           </div>
-
         </div>
-        <!-- bubble chart -->
-        <hr class="dashed">
+      </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <!-- multiline chart -->
+    <div class="card">
+      <div id="multiline"></div>
+    </div>
+    <br />
+    <br />
+    <!-- multiline chart w/ per change -->
+
+    <br />
+    <br />
+    <div class="col-md-6">
+      <h1>Bubble Chart Analysis</h1>
+    </div>
+
+    <!-- bubble chart date selector -->
+    <div class="row">
+      <div class="col-sm-4">
         <div class="card">
-          <div class="row">
-            <div class="col-md-12">
-              <div id="bubble"></div>
-            </div>
+          <div class="card-body">
+            <h5>Select Date</h5>
+            <select id="selDataset" onchange="dateSelect(this.value)"></select>
           </div>
         </div>
-        <hr class="dashed">
-        <br />
-        <!-- date selector for treemap -->
-        <div class="col-md-6">
-          <h1>Tree Chart Analysis</h1>
-          <br />
-        </div>
-        <div class="row">
-          <div class="col-sm-2">
-            <div class="card">
-              <div class="card-body">
-                <h5>Select Date</h5>
-                <select id="selDatasetForMap" onchange="dateSelectForMap(this.value)"></select>
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
 
-        <!-- tree map -->
-        <hr class="dashed">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div id="tree"></div>
-            </div>
+    <!-- bubble chart -->
+    <div class="row">
+      <div class="card">
+        <div id="bubble"></div>
+      </div>
+    </div>
+
+    <!-- treemap header -->
+    <div class="col-md-6">
+      <h1>Tree Chart Analysis</h1>
+    </div>
+
+    <!-- treemap date select -->
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5>Select Date</h5>
+            <select id="selDatasetForMap" onchange="dateSelectForMap(this.value)"></select>
           </div>
         </div>
-        <script src="./static/plots.js"></script>
-        <script src="./static/observable.js"></script>
-        <!-- <script src="./static/sampleTickers.js"></script> for testing -->
+      </div>
+    </div>
 
+    <!-- treemap -->
+    <div class="row">
+      <div class="col-md-12">
+        <div id="tree"></div>
+      </div>
+    </div>
+
+    <!-- scripts -->
+    <script src="./static/plots.js"></script>
+    <script src="./static/observable.js"></script>
+    <script src="./static/util.js"></script>
+    <!-- <script src="./static/sampleTickers.js"></script> for testing -->
+  </div>
 </body>
 
 </html>
